@@ -4,6 +4,7 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const pool = require("./config/db");
 const userRoutes = require("./routes/api/userRoutes");
+const errorHandler = require("./middleware/errorHandler");
 
 dotenv.config();
 
@@ -27,5 +28,8 @@ app.use(passport.session());
 
 // Routes
 app.use("/api/users", userRoutes);
+
+// Error handler
+app.use(errorHandler);
 
 module.exports = app;
