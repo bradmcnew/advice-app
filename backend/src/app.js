@@ -1,14 +1,17 @@
 const express = require("express");
 const session = require("express-session");
-const passport = require("passport");
 const dotenv = require("dotenv");
-const pool = require("./config/db");
 const userRoutes = require("./routes/api/userRoutes");
 const errorHandler = require("./middleware/errorHandler");
+const passport = require("passport");
+const passportConfig = require("./middleware/passport");
 
 dotenv.config();
 
 const app = express();
+
+// Passport configuration
+passportConfig(passport);
 
 // Middleware
 app.use(express.json());

@@ -1,40 +1,41 @@
-const passport = require("passport");
+// config/passport.js
 const LocalStrategy = require("passport-local").Strategy;
-const pool = require("../config/db");
+const { User } = require("../models");
 
-passport.use(
-  new LocalStrategy(async (username, password, done) => {
+module.exports = (passport) => {
+  passport.use(
+    new LocalStrategy(
+      { usernameField: "username" },
+      async (username, password, done) => {
+        try {
+          const user = await User.findOne({ where: { username } });
+          if (!user) {
+            return done(null, false, { message: "Incorrect username." });
+          }
+
+          const isPasswordValid = await user.validatePassword(password);
+          if (!isPasswordValid) {
+            return done(null, false, { message: "Incorrect password." });
+          }
+
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
+
+  passport.deserializeUser(async (id, done) => {
     try {
-      const res = await pool.query("SELECT * FROM users WHERE username = $1", [
-        username,
-      ]);
-      const user = res.rows[0];
-
-      if (!user) {
-        return done(null, false, { message: "User not found" });
-      }
-
-      if (password !== user.password) {
-        return done(null, false, { message: "Password incorrect" });
-      }
-
-      return done(null, user);
-    } catch (err) {
-      return done(err);
+      const user = await User.findByPk(id);
+      done(null, user);
+    } catch (error) {
+      done(error);
     }
-  })
-);
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const res = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-    const user = res.rows[0];
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
+  });
+};

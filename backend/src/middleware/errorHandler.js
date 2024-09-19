@@ -1,9 +1,11 @@
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
-  res.status(err.status || 500);
+  const statusCode = err.status || 500;
   res.json({
     error: {
-      message: err.message,
+      status: "error",
+      statusCode,
+      message: err.message || "An unexpected error occurred",
     },
   });
 };
