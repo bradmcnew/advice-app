@@ -16,6 +16,8 @@ const {
   validate,
 } = require("../../middleware/validators/userLoginValidator");
 
+const logoutUserController = require("../../controllers/logoutUserController");
+
 // Import the controller for user login
 const loginUserController = require("../../controllers/loginUserController");
 
@@ -38,6 +40,11 @@ router.post(
   validate, // Validate the request based on defined rules
   loginUserController // Handle user login
 );
+
+// @route POST /api/users/auth/logout
+// @desc Log out the current authenticated user
+// @access Public
+router.post("/auth/logout", logoutUserController);
 
 // Export the router to use in the main application
 module.exports = router;
