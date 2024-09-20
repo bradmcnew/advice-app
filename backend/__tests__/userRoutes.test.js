@@ -3,12 +3,12 @@ const app = require("../src/app"); // Adjust the path as needed
 const { sequelize, User } = require("../src/models"); // Adjust the path as needed
 
 beforeAll(async () => {
-  // Sync the database before running tests
+  // Sync the database before running tests to ensure a clean state
   await sequelize.sync({ force: true });
 });
 
 afterAll(async () => {
-  // Close database connection after tests
+  // Close the database connection after all tests are complete
   await sequelize.close();
 });
 
@@ -23,14 +23,15 @@ describe("api/users", () => {
           password: "securepassword",
           role: "high_school",
         })
-        .expect(201);
+        .expect(201); // Expect a 201 Created status
 
+      // Verify the response structure and content
       expect(res.body.message).toBe("User registered successfully");
-      expect(res.body.user).toHaveProperty("id");
-      expect(res.body.user).toHaveProperty("username", "testuser");
-      expect(res.body.user).toHaveProperty("email", "testuser@example.com");
-      expect(res.body.user).toHaveProperty("role", "high_school");
-      expect(res.body.user).not.toHaveProperty("password");
+      expect(res.body.user).toHaveProperty("id"); // User should have an ID
+      expect(res.body.user).toHaveProperty("username", "testuser"); // Username should match
+      expect(res.body.user).toHaveProperty("email", "testuser@example.com"); // Email should match
+      expect(res.body.user).toHaveProperty("role", "high_school"); // Role should match
+      expect(res.body.user).not.toHaveProperty("password"); // Password should not be returned
     });
 
     it("should return error if required fields are missing", async () => {
@@ -41,12 +42,14 @@ describe("api/users", () => {
           email: "testuser@example.com",
           // missing password and role
         })
-        .expect(400);
+        .expect(400); // Expect a 400 Bad Request status
 
+      // Verify that the response contains error information
       expect(res.body).toHaveProperty("errors");
     });
 
     it("should return error if user already exists", async () => {
+      // Register a user for the first time
       await request(app).post("/api/users/register").send({
         username: "testuser",
         email: "testuser@example.com",
@@ -62,8 +65,9 @@ describe("api/users", () => {
         role: "high_school",
       });
 
+      // Expect a 400 status for the duplicate registration
       expect(res.status).toBe(400);
-      expect(res.body.message).toBe("User already exists");
+      expect(res.body.message).toBe("User already exists"); // Check the error message
     });
   });
 });

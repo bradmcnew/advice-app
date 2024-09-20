@@ -20,18 +20,22 @@ const loginUser = (req, res, next) => {
         return reject(err);
       }
 
-      // No user found; resolve with failure message.
-      if (!user) return resolve({ success: false, message: info.message });
+      // Check if no user was found; resolve with a failure message.
+      if (!user) {
+        return resolve({ success: false, message: info.message });
+      }
 
+      // Log in the user using the req.logIn method.
       req.logIn(user, (err) => {
         if (err) {
+          // If there's an error during login, reject the promise.
           return reject(err);
         }
 
-        // Authentication successful; resolve with the user.
+        // Authentication successful; resolve with the user object.
         resolve({ success: true, user });
       });
-    })(req, res, next);
+    })(req, res, next); // Call the authenticate function with the request and response objects.
   });
 };
 

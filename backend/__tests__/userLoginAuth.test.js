@@ -2,29 +2,35 @@ const passport = require("passport");
 const loginUserController = require("../src/controllers/loginUserController");
 const { loginUser } = require("../src/services/userLoginService");
 
+// Mock the user login service for isolated testing
 jest.mock("../src/services/userLoginService");
 
 describe("loginUserController", () => {
   let req, res, next;
 
   beforeEach(() => {
+    // Mocking the request object
     req = {
-      logIn: jest.fn((user, cb) => cb(null)),
+      logIn: jest.fn((user, cb) => cb(null)), // Mocking Passport's logIn method
       body: {
         username: "testuser",
         password: "testpassword",
       },
     };
+
+    // Mocking the response object
     res = {
-      status: jest.fn(() => res),
-      json: jest.fn(),
+      status: jest.fn(() => res), // Allows chaining
+      json: jest.fn(), // Mock json method
     };
+
+    // Mocking the next function for error handling
     next = jest.fn();
 
-    // Mock passport.authenticate
+    // Mock Passport's authenticate method for testing
     passport.authenticate = jest.fn().mockImplementation((strategy, cb) => {
       return (req, res, next) => {
-        cb(null, { id: 1, username: "testuser" }, null);
+        cb(null, { id: 1, username: "testuser" }, null); // Simulating successful authentication
       };
     });
   });
@@ -37,17 +43,19 @@ describe("loginUserController", () => {
     // Call the controller
     await loginUserController(req, res, next);
 
-    // Check that res.status and res.json were called correctly
+    // Verify response status and json payload
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       message: "Logged in successfully",
       user,
     });
 
+    // Verify that loginUser was called with correct arguments
     expect(loginUser).toHaveBeenCalledWith(req, res, next);
   });
 
   test("should handle login failure", async () => {
+    // Simulating a login failure scenario
     loginUser.mockResolvedValue({
       success: false,
       message: "Invalid credentials",
@@ -55,14 +63,16 @@ describe("loginUserController", () => {
 
     await loginUserController(req, res, next);
 
+    // Verify response for login failure
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
 
+    // Ensure loginUser was called
     expect(loginUser).toHaveBeenCalledWith(req, res, next);
   });
 
   test("should handle authentication errors", async () => {
-    // Mock Passport.js to call the callback with an error
+    // Mocking the loginUser function to simulate an authentication error
     loginUser.mockRejectedValue(new Error("Authentication error"));
 
     await loginUserController(req, res, next);
