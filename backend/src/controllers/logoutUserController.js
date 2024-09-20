@@ -1,19 +1,24 @@
-const logoutUserController = async (req, res) => {
-  // Initiate the logout process. `req.logout` is typically provided by Passport.js to handle the logout functionality.
+const logoutUserController = async (req, res, next) => {
+  // Start the logout process. `req.logout` is provided by Passport.js to handle user logout.
   req.logout((err) => {
+    // Check for errors during the logout process
     if (err) {
-      // If an error occurs during logout, pass it to the next error handler middleware.
+      // Pass the error to the next error-handling middleware for proper error handling
       return next(err);
     }
 
-    // Destroy the user's session. This ensures that the session data is removed from the store, preventing unauthorized access.
+    // Proceed to destroy the user's session to remove any stored session data
     req.session.destroy((err) => {
+      // Check for errors during session destruction
       if (err) {
-        // If an error occurs during session destruction, return a 500 status code indicating a server error.
-        return res.status(500).send("Failed to clear session");
+        // Create a new error object for session destruction failure
+        const error = new Error("Session destruction error");
+        error.status = 500; // Set the error status to 500 for server errors
+        // Pass the error to the next error-handling middleware
+        return next(error);
       }
 
-      // If logout and session destruction are successful, send a 200 status code to indicate successful logout.
+      // If logout and session destruction are successful, respond with a 200 status
       return res.status(200).send("Logged out successfully");
     });
   });
