@@ -5,6 +5,7 @@ const userRoutes = require("./routes/api/userRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const passport = require("passport");
 const passportConfig = require("./middleware/passport");
+const cors = require("cors");
 
 // Load environment variables from .env file
 // This is essential for managing environment-specific settings securely
@@ -24,6 +25,9 @@ app.use(express.json());
 // Parse incoming URL-encoded requests
 // This middleware parses URL-encoded bodies, which is useful for form submissions
 app.use(express.urlencoded({ extended: true }));
+
+// Enable CORS
+app.use(cors());
 
 // Session configuration
 // Configures session management for tracking user sessions
