@@ -6,12 +6,19 @@ const errorHandler = require("./middleware/errorHandler");
 const passport = require("passport");
 const passportConfig = require("./middleware/passport");
 const cors = require("cors");
+const morgan = require("morgan");
 
 // Load environment variables from .env file
 // This is essential for managing environment-specific settings securely
 dotenv.config();
 
 const app = express();
+
+// Logging
+// Log HTTP requests to the console
+if (process.env.NODE_ENV === "dev") {
+  app.use(morgan("dev"));
+}
 
 // Passport configuration
 // Initializes Passport and sets up the authentication strategy
