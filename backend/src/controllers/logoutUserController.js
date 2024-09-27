@@ -8,6 +8,7 @@ const logoutUserController = async (req, res, next) => {
     }
 
     // Proceed to destroy the user's session to remove any stored session data
+    console.log("Session before logout:", req.session);
     req.session.destroy((err) => {
       // Check for errors during session destruction
       if (err) {
@@ -19,6 +20,8 @@ const logoutUserController = async (req, res, next) => {
       }
 
       // If logout and session destruction are successful, respond with a 200 status
+      res.clearCookie("connect.sid", { path: "/" }); // Clear the session cookie for good
+      console.log("Session after logout:", req.session);
       return res.status(200).send("Logged out successfully");
     });
   });

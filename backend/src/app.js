@@ -34,7 +34,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 
 // Session configuration
 // Configures session management for tracking user sessions
@@ -43,7 +48,7 @@ app.use(
     secret: process.env.SESSION_SECRET, // Secret for session encryption, should be kept confidential
     resave: false, // Prevents resaving session if unmodified, reducing unnecessary storage operations
     saveUninitialized: true, // Saves a new session even if it’s not modified, useful for tracking new sessions
-    cookie: { secure: false }, // Set to true if you're using HTTPS to ensure cookies are only sent over secure channels
+    cookie: { httpOnly: true, secure: false, sameSite: "lax" }, // Set to true if you're using HTTPS to ensure cookies are only sent over secure channels
   })
 );
 

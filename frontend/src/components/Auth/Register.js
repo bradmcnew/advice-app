@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../authService";
 import useForm from "../../hooks/useForm";
 import Input from "../Common/Input";
@@ -6,6 +7,7 @@ import { handleErrors } from "../../utils/handleErrors";
 import "../../styles/auth.css";
 
 const Register = () => {
+  const navigate = useNavigate();
   const { values, errors, handleChange, handleSubmit } = useForm(
     {
       username: "",
@@ -18,6 +20,7 @@ const Register = () => {
         const response = await registerUser(values);
         console.log("User registered successfully", response);
         // Redirect or show success message
+        navigate("/login");
       } catch (error) {
         if (error.response && error.response.data) {
           console.error("Error registering user", error.response.data);

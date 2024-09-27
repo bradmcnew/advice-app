@@ -18,6 +18,8 @@ const loginUserController = async (req, res, next) => {
       return res.status(401).json({ message: result.message });
     }
 
+    console.log("Session after login:", req.session);
+
     // Return a successful login response with user information
     res.status(200).json({
       message: "Logged in successfully",
