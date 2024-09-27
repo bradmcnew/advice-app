@@ -24,6 +24,15 @@ const loginUserController = require("../../controllers/loginUserController");
 // Import the isAuthenticated middleware to protect routes
 const isAuthenticated = require("../../middleware/Auth");
 
+// Import the controller for forgot password and reset password
+const {
+  forgotPassword,
+  resetPassword,
+} = require("../../controllers/resetUserPasswordController");
+
+// Import the password rate limiter middleware
+const passwordRateLimiter = require("../../utils/passwordRateLimiter");
+
 // @route POST /api/users/register
 // @desc Register a new user
 // @access Public
@@ -48,6 +57,16 @@ router.post(
 // @desc Log out the current authenticated user
 // @access Public
 router.post("/auth/logout", isAuthenticated, logoutUserController);
+
+// @route POST /api/users/auth/forgot-password
+// @desc Send a password reset email to the user
+// @access Public
+router.post("/auth/forgot-password", passwordRateLimiter, forgotPassword);
+
+// @route POST /api/users/auth/reset-password
+// @desc Reset the user's password
+// @access Public
+router.post("/auth/reset-password", resetPassword);
 
 // Export the router to use in the main application
 module.exports = router;

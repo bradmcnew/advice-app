@@ -35,6 +35,11 @@ describe("loginUserController", () => {
     });
   });
 
+  afterEach(() => {
+    jest.clearAllMocks(); // Clear mock calls and instances
+    // Optional: add additional teardown logic here if needed
+  });
+
   test("should successfully log in the user", async () => {
     // Mock loginUser to return a successful result
     const user = { id: 1, username: "testuser" };

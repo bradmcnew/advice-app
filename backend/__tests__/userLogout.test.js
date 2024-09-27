@@ -14,6 +14,8 @@ describe("logoutUserController", () => {
       },
     };
     res = {
+      // Mock the clearCookie method to remove the session cookie
+      clearCookie: jest.fn(),
       // Mock response methods for status and send
       status: jest.fn().mockReturnThis(), // Allow chaining
       send: jest.fn(),
