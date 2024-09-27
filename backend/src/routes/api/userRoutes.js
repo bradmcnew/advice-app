@@ -21,6 +21,9 @@ const logoutUserController = require("../../controllers/logoutUserController");
 // Import the controller for user login
 const loginUserController = require("../../controllers/loginUserController");
 
+// Import the isAuthenticated middleware to protect routes
+const isAuthenticated = require("../../middleware/Auth");
+
 // @route POST /api/users/register
 // @desc Register a new user
 // @access Public
@@ -44,7 +47,7 @@ router.post(
 // @route POST /api/users/auth/logout
 // @desc Log out the current authenticated user
 // @access Public
-router.post("/auth/logout", logoutUserController);
+router.post("/auth/logout", isAuthenticated, logoutUserController);
 
 // Export the router to use in the main application
 module.exports = router;

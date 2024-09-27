@@ -18,6 +18,11 @@ const Logout = () => {
     } catch (error) {
       console.error("Error logging out", error);
       // Handle error (optional)
+      if (error.response && error.response.status === 401) {
+        console.error("Unauthorized access. Please log in again.");
+        // Redirect to login page
+        navigate("/login");
+      }
     }
   };
 
