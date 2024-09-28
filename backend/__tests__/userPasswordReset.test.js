@@ -90,13 +90,17 @@ describe("Auth Routes", () => {
       });
       const user = await User.findByPk(userResponse.body.user.id);
 
-      // Simulate sending a reset token (you might want to mock the email sending)
-      const token = "someValidToken";
+      // Simulate sending a reset token
+      const token = "someValidToken"; // Use a valid token here
       await saveResetToken(user, token);
 
       const response = await request(app)
         .post("/api/users/auth/reset-password")
-        .send({ token, newPassword: "newPassword123" });
+        .send({
+          token,
+          newPassword: "newPassword123", // Ensure this meets your validation rules
+          confirmPassword: "newPassword123", // This should match newPassword
+        });
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Password reset successfully");
@@ -104,7 +108,6 @@ describe("Auth Routes", () => {
       // Verify the password has been updated (ensure to check hashes)
       const updatedUser = await User.findOne({ where: { email: user.email } });
       expect(updatedUser.password_hash).not.toBe(user.password_hash);
-      // You can also use a password verification method if available
     });
 
     it("should return 400 if the token is invalid or expired", async () => {
@@ -127,10 +130,92 @@ describe("Auth Routes", () => {
 
       const response = await request(app)
         .post("/api/users/auth/reset-password")
-        .send({ token: expiredToken, newPassword: "newPassword123" });
+        .send({
+          token: expiredToken,
+          newPassword: "newPassword123",
+          confirmPassword: "newPassword123",
+        });
 
       expect(response.status).toBe(400);
       expect(response.body.message).toBe("Invalid or expired token");
+    });
+
+    it("should return 400 if new password is missing", async () => {
+      const response = await request(app)
+        .post("/api/users/auth/reset-password")
+        .send({
+          token: "validToken",
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ msg: "Password is required" }),
+        ])
+      );
+    });
+
+    it("should return 400 if token is missing", async () => {
+      const response = await request(app)
+        .post("/api/users/auth/reset-password")
+        .send({
+          newPassword: "newPassword",
+          confirmPassword: "newPassword",
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ msg: "Reset token is required" }),
+        ])
+      );
+    });
+
+    it("should return 400 if confirmPassword is missing", async () => {
+      const response = await request(app)
+        .post("/api/users/auth/reset-password")
+        .send({
+          newPassword: "newPassword",
+          token: "validToken",
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ msg: "Confirmation password is required" }),
+        ])
+      );
+    });
+
+    it("should return 400 if confirmPassword does not match newPassword", async () => {
+      const userResponse = await request(app).post("/api/users/register").send({
+        username: "testuser",
+        email: "testuser@example.com",
+        password: "securepassword",
+        role: "high_school",
+      });
+      const user = await User.findByPk(userResponse.body.user.id);
+
+      // Simulate sending a reset token
+      const token = "someValidToken"; // Use a valid token here
+      await saveResetToken(user, token);
+
+      const response = await request(app)
+        .post("/api/users/auth/reset-password")
+        .send({
+          token,
+          newPassword: "newPassword123",
+          confirmPassword: "differentPassword", // This should not match
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            msg: "Password confirmation does not match.",
+          }),
+        ])
+      );
     });
   });
 });

@@ -29,7 +29,13 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res, next) => {
-  const { token, newPassword } = req.body;
+  const { token, newPassword, confirmPassword } = req.body;
+
+  // Check if the new password and confirm password match
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: "Passwords do not match" });
+  }
+
   try {
     const user = await User.findOne({
       where: { resetToken: resetService.hashToken(token) },

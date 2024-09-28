@@ -16,13 +16,11 @@ const {
   validate,
 } = require("../../middleware/validators/userLoginValidator");
 
-const logoutUserController = require("../../controllers/logoutUserController");
-
 // Import the controller for user login
 const loginUserController = require("../../controllers/loginUserController");
 
-// Import the isAuthenticated middleware to protect routes
-const isAuthenticated = require("../../middleware/Auth");
+// Import the controller for user logout
+const logoutUserController = require("../../controllers/logoutUserController");
 
 // Import the controller for forgot password and reset password
 const {
@@ -33,14 +31,20 @@ const {
 // Import the password rate limiter middleware
 const passwordRateLimiter = require("../../utils/passwordRateLimiter");
 
+// Import the validation middleware for password reset
+const {
+  resetPasswordValidationRules,
+  validateResetPassword,
+} = require("../../middleware/validators/userResetPasswordValidator");
+
 // @route POST /api/users/register
 // @desc Register a new user
 // @access Public
 router.post(
   "/register",
-  userValidationRules(), // Apply validation rules for user registration
-  validateUser, // Validate the request based on defined rules
-  registerUserController // Handle user registration
+  userValidationRules(),
+  validateUser,
+  registerUserController
 );
 
 // @route POST /api/users/auth/login
@@ -48,15 +52,15 @@ router.post(
 // @access Public
 router.post(
   "/auth/login",
-  loginValidationRules(), // Apply validation rules for user login
-  validate, // Validate the request based on defined rules
-  loginUserController // Handle user login
+  loginValidationRules(),
+  validate,
+  loginUserController
 );
 
 // @route POST /api/users/auth/logout
 // @desc Log out the current authenticated user
 // @access Public
-router.post("/auth/logout", isAuthenticated, logoutUserController);
+router.post("/auth/logout", logoutUserController);
 
 // @route POST /api/users/auth/forgot-password
 // @desc Send a password reset email to the user
@@ -66,7 +70,12 @@ router.post("/auth/forgot-password", passwordRateLimiter, forgotPassword);
 // @route POST /api/users/auth/reset-password
 // @desc Reset the user's password
 // @access Public
-router.post("/auth/reset-password", resetPassword);
+router.post(
+  "/auth/reset-password",
+  resetPasswordValidationRules(),
+  validateResetPassword,
+  resetPassword
+);
 
 // Export the router to use in the main application
 module.exports = router;
