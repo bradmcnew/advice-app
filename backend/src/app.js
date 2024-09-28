@@ -1,10 +1,12 @@
 const express = require("express");
 const session = require("express-session");
 const dotenv = require("dotenv");
+//routes
 const userRoutes = require("./routes/api/userRoutes");
+const googleRoutes = require("./routes/api/googleRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const passport = require("passport");
-const passportConfig = require("./middleware/passport");
+const passportConfig = require("./config/passport");
 const cors = require("cors");
 const morgan = require("morgan");
 
@@ -60,6 +62,8 @@ app.use(passport.session());
 // API routes
 // Mounts the userRoutes middleware to handle routes under /api/users
 app.use("/api/users", userRoutes);
+// oauth routes
+app.use("/api/auth/google", googleRoutes);
 
 // Error handler middleware
 // Provides a centralized place to handle errors, improving maintainability and debugging

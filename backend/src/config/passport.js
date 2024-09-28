@@ -1,6 +1,7 @@
 // config/passport.js
 const LocalStrategy = require("passport-local").Strategy;
 const { User } = require("../models"); // Import the User model
+const googleStrategy = require("./google-strategy");
 
 // Export the Passport configuration function
 module.exports = (passport) => {
@@ -33,6 +34,9 @@ module.exports = (passport) => {
       }
     )
   );
+
+  // Call google strategy
+  googleStrategy(passport);
 
   // Serialize user instance to store in session
   passport.serializeUser((user, done) => {

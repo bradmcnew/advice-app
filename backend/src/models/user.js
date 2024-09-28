@@ -45,6 +45,11 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE,
         allowNull: true, // Reset token expiration can be null
       },
+      google_id: {
+        type: DataTypes.STRING,
+        unique: true, // Ensure that googleId is unique
+        allowNull: true, // Allow null for users who authenticate via other means
+      },
       created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW, // Set default value to current date/time
