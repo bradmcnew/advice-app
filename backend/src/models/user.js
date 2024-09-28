@@ -37,11 +37,11 @@ module.exports = (sequelize) => {
           isIn: [["high_school", "college_student"]], // Validate that the role is either high_school or college_student
         },
       },
-      resetToken: {
+      reset_token: {
         type: DataTypes.STRING(255),
         allowNull: true, // Reset token can be null
       },
-      resetTokenExpiration: {
+      reset_token_expiration: {
         type: DataTypes.DATE,
         allowNull: true, // Reset token expiration can be null
       },

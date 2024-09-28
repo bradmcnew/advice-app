@@ -21,8 +21,8 @@ const findUserByEmail = async (email) => {
 };
 
 const saveResetToken = async (user, token) => {
-  user.resetToken = hashToken(token);
-  user.resetTokenExpiration = Date.now() + 3600000; // 1 hour expiration
+  user.reset_token = hashToken(token);
+  user.reset_token_expiration = Date.now() + 3600000; // 1 hour expiration
   try {
     await user.save();
   } catch (error) {
@@ -41,7 +41,7 @@ const sendPasswordReset = async (email, token) => {
 };
 
 const isResetTokenValid = (user) => {
-  return user.resetToken && user.resetTokenExpiration > Date.now();
+  return user.reset_token && user.reset_token_expiration > Date.now();
 };
 
 module.exports = {

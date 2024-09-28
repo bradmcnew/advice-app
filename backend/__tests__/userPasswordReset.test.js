@@ -95,9 +95,8 @@ describe("Auth Routes", () => {
       await saveResetToken(user, token);
 
       const response = await request(app)
-        .post("/api/users/auth/reset-password")
+        .post(`/api/users/auth/reset-password/${token}`)
         .send({
-          token,
           newPassword: "newPassword123", // Ensure this meets your validation rules
           confirmPassword: "newPassword123", // This should match newPassword
         });
@@ -125,13 +124,12 @@ describe("Auth Routes", () => {
       await saveResetToken(user, expiredToken);
 
       // Simulating expiration by altering the token expiration date directly
-      user.resetTokenExpiration = new Date(Date.now() - 1000); // Set expiration in the past
+      user.reset_token_expiration = new Date(Date.now() - 1000); // Set expiration in the past
       await user.save();
 
       const response = await request(app)
-        .post("/api/users/auth/reset-password")
+        .post(`/api/users/auth/reset-password/${expiredToken}`)
         .send({
-          token: expiredToken,
           newPassword: "newPassword123",
           confirmPassword: "newPassword123",
         });
@@ -142,9 +140,9 @@ describe("Auth Routes", () => {
 
     it("should return 400 if new password is missing", async () => {
       const response = await request(app)
-        .post("/api/users/auth/reset-password")
+        .post("/api/users/auth/reset-password/validToken")
         .send({
-          token: "validToken",
+          confirmPassword: "newPassword",
         });
 
       expect(response.status).toBe(400);
@@ -155,28 +153,11 @@ describe("Auth Routes", () => {
       );
     });
 
-    it("should return 400 if token is missing", async () => {
-      const response = await request(app)
-        .post("/api/users/auth/reset-password")
-        .send({
-          newPassword: "newPassword",
-          confirmPassword: "newPassword",
-        });
-
-      expect(response.status).toBe(400);
-      expect(response.body.errors).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ msg: "Reset token is required" }),
-        ])
-      );
-    });
-
     it("should return 400 if confirmPassword is missing", async () => {
       const response = await request(app)
-        .post("/api/users/auth/reset-password")
+        .post("/api/users/auth/reset-password/validToken")
         .send({
           newPassword: "newPassword",
-          token: "validToken",
         });
 
       expect(response.status).toBe(400);
@@ -201,9 +182,8 @@ describe("Auth Routes", () => {
       await saveResetToken(user, token);
 
       const response = await request(app)
-        .post("/api/users/auth/reset-password")
+        .post(`/api/users/auth/reset-password/${token}`)
         .send({
-          token,
           newPassword: "newPassword123",
           confirmPassword: "differentPassword", // This should not match
         });

@@ -71,7 +71,7 @@ router.post("/auth/forgot-password", passwordRateLimiter, forgotPassword);
 // @desc Reset the user's password
 // @access Public
 router.post(
-  "/auth/reset-password",
+  "/auth/reset-password/:token",
   resetPasswordValidationRules(),
   validateResetPassword,
   resetPassword

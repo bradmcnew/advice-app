@@ -3,9 +3,6 @@ const { body, validationResult } = require("express-validator");
 // Define validation rules specifically for password reset
 const resetPasswordValidationRules = () => {
   return [
-    // Validate the token field
-    body("token").notEmpty().withMessage("Reset token is required"),
-
     // Validate the new password field
     body("newPassword")
       .notEmpty() // Ensure the field is not empty

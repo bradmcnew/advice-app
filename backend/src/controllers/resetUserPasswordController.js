@@ -29,7 +29,13 @@ const forgotPassword = async (req, res) => {
 };
 
 const resetPassword = async (req, res, next) => {
-  const { token, newPassword, confirmPassword } = req.body;
+  const { token } = req.params;
+
+  const { newPassword, confirmPassword } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: "Reset token is required" });
+  }
 
   // Check if the new password and confirm password match
   if (newPassword !== confirmPassword) {
@@ -38,7 +44,7 @@ const resetPassword = async (req, res, next) => {
 
   try {
     const user = await User.findOne({
-      where: { resetToken: resetService.hashToken(token) },
+      where: { reset_token: resetService.hashToken(token) },
     });
     if (!user || !resetService.isResetTokenValid(user)) {
       return res.status(400).json({ message: "Invalid or expired token" });
@@ -48,8 +54,8 @@ const resetPassword = async (req, res, next) => {
     await user.setPassword(newPassword);
 
     // Clear the reset token and expiration
-    user.resetToken = null;
-    user.resetTokenExpiration = null;
+    user.reset_token = null;
+    user.reset_token_expiration = null;
     await user.save(); // Save the user to the database
 
     return res.status(200).json({ message: "Password reset successfully" });
