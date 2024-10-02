@@ -36,6 +36,8 @@ const {
   resetPasswordValidationRules,
   validateResetPassword,
 } = require("../../middleware/validators/userResetPasswordValidator");
+const ensureAuthenticated = require("../../middleware/Auth");
+const { authenticate } = require("passport");
 
 // @route POST /api/users/register
 // @desc Register a new user
@@ -76,6 +78,11 @@ router.post(
   validateResetPassword,
   resetPassword
 );
+
+// authentication check route
+router.get("/auth/check", ensureAuthenticated, (req, res) => {
+  res.status(200).json({ authenticated: true });
+});
 
 // Export the router to use in the main application
 module.exports = router;

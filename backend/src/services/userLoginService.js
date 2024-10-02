@@ -20,9 +20,17 @@ const loginUser = (req, res, next) => {
         return reject(err);
       }
 
-      // Check if no user was found; resolve with a failure message.
+      // Check if no user was found; clear session and resolve with a failure message.
       if (!user) {
-        return resolve({ success: false, message: info.message });
+        // Clear existing session
+        req.session.destroy((error) => {
+          if (error) {
+            console.error("Error destroying session:", error);
+          }
+          // Resolve with failure message
+          return resolve({ success: false, message: info.message });
+        });
+        return; // Prevent further execution
       }
 
       // Log in the user using the req.logIn method.

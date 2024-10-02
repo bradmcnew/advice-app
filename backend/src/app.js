@@ -49,8 +49,14 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET, // Secret for session encryption, should be kept confidential
     resave: false, // Prevents resaving session if unmodified, reducing unnecessary storage operations
-    saveUninitialized: true, // Saves a new session even if it’s not modified, useful for tracking new sessions
-    cookie: { httpOnly: true, secure: false, sameSite: "lax" }, // Set to true if you're using HTTPS to ensure cookies are only sent over secure channels
+    saveUninitialized: false, // Saves a new session even if it’s not modified, useful for tracking new sessions
+    cookie: {
+      maxAge: 1000 * 60 * 15,
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    }, // Set to true if you're using HTTPS to ensure cookies are only sent over secure channels
+    rolling: true, // Reset maxAge on every response, extending the session duration
   })
 );
 
