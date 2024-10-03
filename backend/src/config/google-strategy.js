@@ -11,23 +11,37 @@ module.exports = (passport) => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          // Find or create user based on Google profile
-          const [user, created] = await User.findOrCreate({
-            where: { googleId: profile.id },
-            defaults: {
-              username: profile.displayName,
-              email: profile.emails[0].value,
-            },
-          });
+          // Try to find the user by Google ID
+          let user = await User.findOne({ where: { google_id: profile.id } });
 
-          // If the user was created, log the creation status
-          if (created) {
-            console.log("User created from google: ", user);
+          if (!user) {
+            // If no user exists with that Google ID, try to find by email
+            user = await User.findOne({
+              where: { email: profile.emails[0].value },
+            });
+
+            if (!user) {
+              // If no user exists with that email, create a new user
+              user = await User.create({
+                google_id: profile.id,
+                username: profile.displayName,
+                email: profile.emails[0].value,
+              });
+              console.log("New user created from Google: ", user);
+            } else {
+              // If user exists but doesn't have a Google ID, update it
+              if (!user.google_id) {
+                user.google_id = profile.id;
+                await user.save();
+                console.log("User updated with google_id: ", user);
+              }
+            }
           }
 
-          return done(null, user); // Return the user regardless of creation status
+          return done(null, user); // Successfully return the user
         } catch (error) {
-          return done(error);
+          console.error("Error during Google authentication:", error);
+          return done(error); // Handle any errors that occur
         }
       }
     )

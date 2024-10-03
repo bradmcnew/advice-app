@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
 
 // Import validation middleware for user registration
 const {
@@ -56,7 +57,10 @@ router.post(
   "/auth/login",
   loginValidationRules(),
   validate,
-  loginUserController
+  passport.authenticate("local", {
+    successRedirect: "/api/users/dashboard",
+    failureRedirect: "/api/users/login",
+  })
 );
 
 // @route POST /api/users/auth/logout
@@ -79,8 +83,19 @@ router.post(
   resetPassword
 );
 
+// @route GET /api/users/dashboard
+// @desc Get the dashboard for the authenticated user
+// @access Private
+router.get("/dashboard", ensureAuthenticated, (req, res) => {
+  // Respond with user information or any dashboard data
+  res.status(200).json({
+    message: "Welcome to your dashboard!",
+    user: req.user, // Accessing the logged-in user's info
+  });
+});
+
 // authentication check route
-router.get("/auth/check", ensureAuthenticated, (req, res) => {
+router.get("/auth/check-session", ensureAuthenticated, (req, res) => {
   res.status(200).json({ authenticated: true });
 });
 

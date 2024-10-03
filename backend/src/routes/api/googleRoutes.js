@@ -27,12 +27,7 @@ router.get(
   "/redirect",
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    console.log("Google login successful");
-    if (req.user.created) {
-      console.log("User created from Google: ", req.user);
-    } else {
-      console.log("Existing user logged in with Google: ", req.user);
-    }
+    console.log("User authenticated:", req.user);
     res.redirect("http://localhost:3000/dashboard"); // Redirect to the dashboard on success
   }
 );

@@ -28,11 +28,11 @@ module.exports = (sequelize) => {
       },
       password_hash: {
         type: DataTypes.STRING(255),
-        allowNull: false, // Password hash cannot be null
+        allowNull: true, // Password hash can be null
       },
       role: {
         type: DataTypes.STRING(50),
-        allowNull: false, // Role cannot be null
+        allowNull: true, // Role can be null
         validate: {
           isIn: [["high_school", "college_student"]], // Validate that the role is either high_school or college_student
         },
@@ -50,20 +50,13 @@ module.exports = (sequelize) => {
         unique: true, // Ensure that googleId is unique
         allowNull: true, // Allow null for users who authenticate via other means
       },
-      created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW, // Set default value to current date/time
-        field: "created_at", // Map to created_at column in the database
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW, // Set default value to current date/time
-        field: "updated_at", // Map to updated_at column in the database
-      },
+      // No need to manually define createdAt or updatedAt here
     },
     {
       tableName: "users", // Set the table name in the database
-      timestamps: false, // Disable automatic timestamps since we are manually managing them
+      timestamps: true, // Enable automatic management of `createdAt` and `updatedAt`
+      createdAt: "created_at", // Map `createdAt` to `created_at` column
+      updatedAt: "updated_at", // Map `updatedAt` to `updated_at` column
     }
   );
 
