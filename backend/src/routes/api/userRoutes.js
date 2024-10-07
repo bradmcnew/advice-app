@@ -57,10 +57,7 @@ router.post(
   "/auth/login",
   loginValidationRules(),
   validate,
-  passport.authenticate("local", {
-    successRedirect: "/api/users/dashboard",
-    failureRedirect: "/api/users/login",
-  })
+  loginUserController
 );
 
 // @route POST /api/users/auth/logout

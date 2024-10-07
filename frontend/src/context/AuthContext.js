@@ -1,38 +1,59 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { checkAuthStatus } from "../axios/auth";
+import React, { createContext, useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout, verifyAuth } from "../features/auth/authSlice";
 
+// Create AuthContext
 const AuthContext = createContext();
 
+// AuthProvider Component
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  // Use useSelector to get auth state from Redux
+  const { isAuthenticated, loading, error, user } = useSelector(
+    (state) => state.auth
+  );
 
   useEffect(() => {
-    const verifyAuth = async () => {
-      const authData = await checkAuthStatus();
-      console.log("Authentication check:", authData); // Log the result
-      setIsAuthenticated(authData.authenticated);
-      setLoading(false);
+    // Check auth status on component mount
+    const fetchAuthStatus = async () => {
+      await dispatch(verifyAuth());
     };
 
-    verifyAuth();
-  }, []);
+    fetchAuthStatus();
+  }, [dispatch]);
 
-  const login = () => {
-    setIsAuthenticated(true);
+  const handleLogin = (userData) => {
+    dispatch(login(userData));
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
+  const handleLogout = () => {
+    dispatch(logout());
   };
+
+  // Show loading indicator or error message
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, handleLogin, handleLogout }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
+// Custom Hook for easier access to AuthContext
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

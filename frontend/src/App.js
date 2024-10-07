@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
+import RedirectHandler from "./components/Auth/RedirectHandler";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/auth/google/redirect" element={<RedirectHandler />} />
             <Route
               path="/logout"
               element={<ProtectedRoute element={<Logout />} />}

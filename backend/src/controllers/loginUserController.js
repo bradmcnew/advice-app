@@ -22,6 +22,7 @@ const loginUserController = async (req, res, next) => {
 
     // Return a successful login response with user information
     res.status(200).json({
+      success: true,
       message: "Logged in successfully",
       user: result.user,
     });

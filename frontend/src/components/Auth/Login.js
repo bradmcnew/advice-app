@@ -1,34 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../authService"; // Adjust the path according to your project structure
-import useForm from "../../hooks/useForm"; // Make sure this hook is implemented correctly
+import useForm from "../../hooks/useForm"; // Ensure this hook is implemented correctly
 import Input from "../Common/Input"; // Adjust the import path as necessary
 import { handleErrors } from "../../utils/handleErrors"; // Adjust the path according to your project structure
 import "../../styles/auth.css";
-import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux"; // Import Redux hooks
+import { login } from "../../features/auth/authSlice"; // Import the login action from Redux
 import GoogleLoginButton from "./GoogleLoginButton";
+import { useAuth } from "../../context/AuthContext"; // Use your AuthContext
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth(); // Get login function from context
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading, error } = useAuth(); // Get authentication state from AuthContext
+  const [loginError, setLoginError] = useState(null); // State for login error message
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard"); // Redirect if already authenticated
+    }
+  }, [isAuthenticated, navigate]);
+
   const { values, errors, handleChange, handleSubmit } = useForm(
     {
       username: "",
       password: "",
     },
     async () => {
+      setLoginError(null); // Clear previous login error before submitting
+
       try {
-        const response = await loginUser(values);
-        console.log("Login successful:", response);
-        login(); // Update authentication state in context
-        navigate("/dashboard"); // Redirect to dashboard
+        // Dispatch the login action from Redux and unwrap the result
+        const result = await dispatch(login(values)).unwrap();
+        console.log("Login successful:", result);
+        navigate("/dashboard"); // Redirect to dashboard on successful login
       } catch (error) {
-        if (error.response && error.response.data) {
-          console.error("Error logging in", error.response.data);
-          throw error.response.data;
-        }
-        console.error("Error logging in", error);
-        throw error;
+        console.error("Login failed:", error);
+        setLoginError(error); // Set error message on failure
       }
     }
   );
@@ -51,8 +60,11 @@ const Login = () => {
           type="password"
         />
         {errors && <div className="error-message">{handleErrors(errors)}</div>}
-        <button type="submit" className="submit-btn">
-          Login
+        {loginError && <div className="error-message">{loginError}</div>}{" "}
+        {/* Display login error */}
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}{" "}
+          {/* Change button text when loading */}
         </button>
         <p>
           Don't have an account? <a href="/register">Register here</a>

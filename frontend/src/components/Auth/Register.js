@@ -1,16 +1,20 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../authService";
-import useForm from "../../hooks/useForm";
-import Input from "../Common/Input";
-import { handleErrors } from "../../utils/handleErrors";
+import { registerUser } from "../../authService"; // Adjust the path according to your project structure
+import useForm from "../../hooks/useForm"; // Ensure this hook is implemented correctly
+import Input from "../Common/Input"; // Adjust the import path as necessary
+import { handleErrors } from "../../utils/handleErrors"; // Adjust the path according to your project structure
 import "../../styles/auth.css";
-import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux"; // Import Redux hooks
+import { register } from "../../features/registration/registrationSlice"; // Import the register action
 import GoogleLoginButton from "./GoogleLoginButton";
+import { useAuth } from "../../context/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
@@ -25,18 +29,13 @@ const Register = () => {
       role: "", // Single role string
     },
     async () => {
-      try {
-        const response = await registerUser(values);
-        console.log("User registered successfully", response);
-        // Redirect or show success message
+      const actionResult = await dispatch(register(values));
+      if (register.fulfilled.match(actionResult)) {
+        console.log("User registered successfully");
         navigate("/login");
-      } catch (error) {
-        if (error.response && error.response.data) {
-          console.error("Error registering user", error.response.data);
-          throw error.response.data;
-        }
-        console.error("Error registering user", error);
-        throw error;
+      } else {
+        // Handle registration error
+        console.error("Registration failed:", actionResult.error.message);
       }
     }
   );

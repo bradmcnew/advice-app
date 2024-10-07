@@ -69,7 +69,7 @@ app.use(passport.session());
 // Mounts the userRoutes middleware to handle routes under /api/users
 app.use("/api/users", userRoutes);
 // oauth routes
-app.use("/api/auth/google", googleRoutes);
+app.use("/api/auth", googleRoutes);
 
 // Error handler middleware
 // Provides a centralized place to handle errors, improving maintainability and debugging

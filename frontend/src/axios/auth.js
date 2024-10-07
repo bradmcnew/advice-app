@@ -3,7 +3,7 @@ import axios from "axios";
 export const checkAuthStatus = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:8000/api/users/auth/check-session",
+      `${process.env.REACT_APP_API_URL}/users/auth/check-session`,
       {
         withCredentials: true,
       }

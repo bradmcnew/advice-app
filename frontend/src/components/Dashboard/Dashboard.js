@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../authService"; // Adjust the path according to your project structure
+import { useAuth } from "../../context/AuthContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -17,9 +19,15 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1>Welcome to the Dashboard</h1>
-      <p>This is a secure area of the application.</p>
-      <button onClick={handleLogout}>Logout</button>
+      {user ? (
+        <>
+          <h1>Welcome, {user.username}!</h1>
+          <p>Email: {user.email}</p>
+          {/* Display other user data as needed */}
+        </>
+      ) : (
+        <p>Loading user data...</p>
+      )}
     </div>
   );
 };
