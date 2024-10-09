@@ -67,13 +67,11 @@ const authSlice = createSlice({
         if (action.payload.authenticated) {
           // If user is authenticated
           state.isAuthenticated = true;
-          state.user = action.payload.user;
-          state.loading = false;
         } else {
           state.isAuthenticated = false;
           state.user = null;
-          state.loading = false;
         }
+        state.loading = false;
       })
       .addCase(verifyAuth.rejected, (state, action) => {
         state.loading = false;

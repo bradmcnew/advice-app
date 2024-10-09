@@ -20,11 +20,13 @@ const loginUserController = async (req, res, next) => {
 
     console.log("Session after login:", req.session);
 
+    console.log(result.userData);
+
     // Return a successful login response with user information
     res.status(200).json({
       success: true,
       message: "Logged in successfully",
-      user: result.user,
+      user: result.userData,
     });
   } catch (error) {
     // Log the error for debugging purposes

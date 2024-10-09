@@ -85,9 +85,19 @@ router.post(
 // @access Private
 router.get("/dashboard", ensureAuthenticated, (req, res) => {
   // Respond with user information or any dashboard data
+
+  const {
+    id,
+    password_hash,
+    created_at,
+    updated_at,
+    reset_token,
+    reset_token_expiration,
+    ...userData
+  } = req.user;
   res.status(200).json({
     message: "Welcome to your dashboard!",
-    user: req.user, // Accessing the logged-in user's info
+    user: userData, // Accessing the logged-in user's info
   });
 });
 

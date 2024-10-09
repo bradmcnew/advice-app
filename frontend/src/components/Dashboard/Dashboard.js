@@ -22,7 +22,7 @@ const Dashboard = () => {
       {user ? (
         <>
           <h1>Welcome, {user.username}!</h1>
-          <p>Email: {user.email}</p>
+          <p>Role: {user.role}</p>
           {/* Display other user data as needed */}
         </>
       ) : (

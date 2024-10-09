@@ -40,8 +40,21 @@ const loginUser = (req, res, next) => {
           return reject(err);
         }
 
+        // Destructure the user object to remove sensitive information.
+        const {
+          id,
+          email,
+          password_hash,
+          created_at,
+          updated_at,
+          reset_token,
+          reset_token_expiration,
+          google_id,
+          ...userData
+        } = req.user.dataValues;
+
         // Authentication successful; resolve with the user object.
-        resolve({ success: true, user });
+        resolve({ success: true, userData });
       });
     })(req, res, next); // Call the authenticate function with the request and response objects.
   });
