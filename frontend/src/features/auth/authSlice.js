@@ -67,6 +67,13 @@ const authSlice = createSlice({
         if (action.payload.authenticated) {
           // If user is authenticated
           state.isAuthenticated = true;
+
+          // make sure redux state is updated with user data
+          if (!state.user) {
+            state.isAuthenticated = false;
+            // remove session data
+            logoutUser();
+          }
         } else {
           state.isAuthenticated = false;
           state.user = null;
