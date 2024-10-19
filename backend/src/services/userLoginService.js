@@ -19,6 +19,7 @@ const loginUser = (req, res, next) => {
         // Log the error and reject the promise.
         return reject(err);
       }
+      console.log("User:", user);
 
       // Check if no user was found; clear session and resolve with a failure message.
       if (!user) {

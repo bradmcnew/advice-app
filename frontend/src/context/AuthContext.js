@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   return (

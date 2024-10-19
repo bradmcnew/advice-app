@@ -51,7 +51,7 @@ app.use(
     resave: false, // Prevents resaving session if unmodified, reducing unnecessary storage operations
     saveUninitialized: false, // Saves a new session even if it’s not modified, useful for tracking new sessions
     cookie: {
-      maxAge: 1000 * 60 * 15,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
       httpOnly: true,
       secure: false,
       sameSite: "lax",

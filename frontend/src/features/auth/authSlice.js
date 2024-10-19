@@ -1,6 +1,6 @@
 // src/features/auth/authSlice.js
 
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, dispatch } from "@reduxjs/toolkit";
 import { loginUser, logoutUser } from "../../authService";
 import { checkAuthStatus } from "../../axios/auth";
 
@@ -45,6 +45,7 @@ export const verifyAuth = createAsyncThunk(
       const response = await checkAuthStatus();
       return { authenticated: response.authenticated }; // Return authenticated status
     } catch (err) {
+      console.log("Error:", err);
       return rejectWithValue(
         err.response?.data || "Failed to verify authentication status"
       );
@@ -71,10 +72,9 @@ const authSlice = createSlice({
           // confirm redux state is updated with user data
           if (!state.user) {
             state.isAuthenticated = false;
-            // remove session data
-            logoutUser();
           }
         } else {
+          console.log("action payload", action.payload);
           state.isAuthenticated = false;
           state.user = null;
         }

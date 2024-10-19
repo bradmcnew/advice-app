@@ -14,11 +14,13 @@ const loginUserController = async (req, res, next) => {
 
     // Check if the login was unsuccessful
     if (!result.success) {
+      console.log("Login failed:", result.message);
       // Return a 401 Unauthorized response with an appropriate message
       return res.status(401).json({ message: result.message });
     }
 
     console.log("Session after login:", req.session);
+    console.log("User after login:", req.user);
 
     console.log(result.userData);
 

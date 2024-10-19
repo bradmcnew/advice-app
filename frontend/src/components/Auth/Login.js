@@ -32,8 +32,7 @@ const Login = () => {
 
       try {
         // Dispatch the login action from Redux and unwrap the result
-        const result = await dispatch(login(values)).unwrap();
-        console.log("Login successful:", result);
+        dispatch(login(values));
         navigate("/dashboard"); // Redirect to dashboard on successful login
       } catch (error) {
         console.error("Login failed:", error);

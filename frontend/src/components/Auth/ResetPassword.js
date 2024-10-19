@@ -14,7 +14,9 @@ function ResetPassword() {
   useEffect(() => {
     const checkTokenValidity = async () => {
       try {
-        await axios.post(`/api/user/auth/reset-password/${token}`);
+        await axios.post(`/api/user/auth/reset-password/${token}`, {
+          withCredentials: true,
+        });
       } catch (err) {
         setError(
           "Invalid or expired token. Please request a new password reset."
@@ -38,6 +40,7 @@ function ResetPassword() {
         {
           newPassword,
           confirmPassword,
+          withCredentials: true,
         }
       );
       setMessage(response.data.message);

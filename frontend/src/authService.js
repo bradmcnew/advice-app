@@ -9,8 +9,15 @@ export const registerUser = async (userData) => {
 };
 
 export const loginUser = async (loginData) => {
+  console.log("loginData", loginData);
+  if (loginData.google_id) {
+    return {
+      success: true,
+      user: loginData,
+    };
+  }
   const response = await axiosInstance.post(`/users/auth/login`, loginData);
-  return response.data;
+  return { success: response.data.success, user: response.data.user };
 };
 
 export const logoutUser = async () => {

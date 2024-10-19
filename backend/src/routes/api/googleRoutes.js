@@ -35,16 +35,17 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Authentication failed" });
+      return res.redirect(`${CLIENT_URL}/login`);
     }
+
+    console.log("Session after google login", req.session);
+    console.log("User after google login", req.user);
 
     // Set up your environment variables
     const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
     // Redirect to the frontend (e.g., dashboard or another route)
-    return res.redirect(`${CLIENT_URL}/dashboard`);
+    return res.redirect(`${CLIENT_URL}/auth/redirect`);
   }
 );
 

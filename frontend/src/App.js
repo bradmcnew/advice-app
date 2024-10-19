@@ -21,7 +21,7 @@ function App() {
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/auth/google/redirect" element={<RedirectHandler />} />
+            <Route path="/auth/redirect" element={<RedirectHandler />} />
             <Route
               path="/logout"
               element={<ProtectedRoute element={<Logout />} />}

@@ -1,9 +1,18 @@
 import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 
 const ProtectedRoute = ({ element }) => {
+  const dispatch = useDispatch();
   const { isAuthenticated, loading } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated && !loading) {
+      dispatch(logout());
+    }
+  }, [isAuthenticated, loading, dispatch]);
 
   // If loading, return loading indicator
   if (loading) {
