@@ -37,6 +37,9 @@ const Navbar = () => {
             <li>
               <Link to="/logout">Logout</Link>
             </li>
+            <li>
+              <Link to="/forgot-password">Forgot Password</Link>
+            </li>
           </>
         )}
       </ul>

@@ -6,6 +6,7 @@ import storage from "redux-persist/lib/storage"; // Default storage for web
 import { combineReducers } from "redux"; // Import combineReducers
 import authReducer from "../features/auth/authSlice";
 import registrationReducer from "../features/registration/registrationSlice";
+import passwordResetReducer from "../features/forgotPassword/forgotPasswordSlice";
 
 // Step 1: Create the Persist Configuration
 const persistConfig = {
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   // Use combineReducers here
   auth: authReducer,
   registration: registrationReducer,
+  passwordReset: passwordResetReducer,
   // Add other reducers here as needed
 });
 

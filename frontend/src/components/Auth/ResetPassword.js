@@ -1,85 +1,61 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Input from "../Common/Input"; // Import the custom Input component
+// src/components/PasswordReset.js
 
-function ResetPassword() {
-  const { token } = useParams(); // Get the token from the URL parameters
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  resetPassword,
+  resetState,
+} from "../../features/forgotPassword/forgotPasswordSlice";
+import { useParams } from "react-router-dom";
+
+const PasswordReset = () => {
+  const dispatch = useDispatch();
+  const { token } = useParams(); // Get the token from the URL
+  const { loading, message, error } = useSelector(
+    (state) => state.passwordReset
+  );
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkTokenValidity = async () => {
-      try {
-        await axios.post(`/api/user/auth/reset-password/${token}`, {
-          withCredentials: true,
-        });
-      } catch (err) {
-        setError(
-          "Invalid or expired token. Please request a new password reset."
-        );
-        setMessage("");
-      }
-    };
-
-    checkTokenValidity();
-  }, [token]);
-
-  const handleResetPassword = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
+    if (newPassword === confirmPassword) {
+      dispatch(resetPassword({ token, newPassword, confirmPassword }));
+    } else {
+      console.log("Passwords do not match");
     }
-    try {
-      const response = await axios.post(
-        `/api/user/auth/reset-password/${token}`,
-        {
-          newPassword,
-          confirmPassword,
-          withCredentials: true,
-        }
-      );
-      setMessage(response.data.message);
-      setError("");
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-    } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
-      setMessage("");
-    }
+  };
+
+  const handleReset = () => {
+    dispatch(resetState()); // Clear state on component unmount or when resetting
   };
 
   return (
     <div>
-      <h2>Reset Password</h2>
-      <form onSubmit={handleResetPassword}>
-        <Input
-          label="New Password"
-          name="newPassword"
+      <h2>Reset Your Password</h2>
+      <form onSubmit={handleSubmit}>
+        <input
           type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          error={error && newPassword !== confirmPassword ? error : ""}
+          placeholder="New Password"
+          required
         />
-        <Input
-          label="Confirm New Password"
-          name="confirmPassword"
+        <input
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          error={error && newPassword !== confirmPassword ? error : ""}
+          placeholder="Confirm Password"
+          required
         />
-        <button type="submit">Reset Password</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Resetting..." : "Reset Password"}
+        </button>
       </form>
       {message && <p>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
-}
+};
 
-export default ResetPassword;
+export default PasswordReset;

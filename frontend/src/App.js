@@ -7,9 +7,9 @@ import Navbar from "./components/Navbar/Navbar";
 import Logout from "./components/Auth/Logout";
 import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
-import ForgotPassword from "./components/Auth/ForgotPassword";
 import ResetPassword from "./components/Auth/ResetPassword";
 import RedirectHandler from "./components/Auth/RedirectHandler";
+import PasswordResetRequest from "./components/Auth/ResetPasswordRequest";
 
 function App() {
   return (
@@ -30,8 +30,11 @@ function App() {
               path="/dashboard"
               element={<ProtectedRoute element={<Dashboard />} />}
             />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<PasswordResetRequest />} />
+            <Route
+              path="/auth/reset-password/:token"
+              element={<ResetPassword />}
+            />
             {/* catch all route */}
             <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>

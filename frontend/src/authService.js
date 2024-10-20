@@ -24,3 +24,24 @@ export const logoutUser = async () => {
   const response = await axiosInstance.post(`/users/auth/logout`);
   return response.data;
 };
+
+// Thunk for sending password reset email
+export const sendPasswordResetEmail = async (email) => {
+  const response = await axiosInstance.post("users/auth/forgot-password", {
+    email,
+  });
+  return response.data.message; // Return the message from the response
+};
+
+// Thunk for resetting the password
+export const resetPassword = async ({
+  token,
+  newPassword,
+  confirmPassword,
+}) => {
+  const response = await axiosInstance.post(
+    `users/auth/reset-password/${token}`,
+    { newPassword, confirmPassword }
+  );
+  return response.data.message; // Return the message from the response
+};

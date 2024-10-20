@@ -36,7 +36,7 @@ const sendPasswordReset = async (email, token) => {
   if (process.env.NODE_ENV === "test") {
     return { status: 200, message: "Password reset email sent" };
   }
-  const resetUrl = `${process.env.FRONTEND_URL}/users/reset-password/${token}`;
+  const resetUrl = `${process.env.FRONTEND_URL}/auth/reset-password/${token}`;
   await sendPasswordResetEmail(email, resetUrl);
 };
 
