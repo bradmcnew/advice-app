@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/Common/ProtectedRoute";
 import ResetPassword from "./components/Auth/ResetPassword";
 import RedirectHandler from "./components/Auth/RedirectHandler";
 import PasswordResetRequest from "./components/Auth/ResetPasswordRequest";
+import About from "./components/Index/About";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <h1>User Registration</h1>
           <Navbar />
           <Routes>
+            <Route path="/about" element={<About />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/auth/redirect" element={<RedirectHandler />} />
