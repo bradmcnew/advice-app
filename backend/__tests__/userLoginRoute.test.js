@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../src/app"); // Import the Express app for testing
 const { sequelize, User } = require("../src/models"); // Import Sequelize models
-const loginUserController = require("../src/controllers/loginUserController"); // Import the controller to be tested
+const loginUserController = require("../src/controllers/auth/loginUserController"); // Import the controller to be tested
 
 // Setup database before all tests
 beforeAll(async () => {

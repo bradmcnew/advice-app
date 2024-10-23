@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 //routes
 const userRoutes = require("./routes/api/userRoutes");
 const googleRoutes = require("./routes/api/googleRoutes");
+const profileRoutes = require("./routes/api/profileRoutes");
+
 const errorHandler = require("./middleware/errorHandler");
 const passport = require("passport");
 const passportConfig = require("./config/passport");
@@ -70,6 +72,8 @@ app.use(passport.session());
 app.use("/api/users", userRoutes);
 // oauth routes
 app.use("/api/auth", googleRoutes);
+// profile routes
+app.use("/api/profile", profileRoutes);
 
 // Error handler middleware
 // Provides a centralized place to handle errors, improving maintainability and debugging

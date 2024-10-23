@@ -1,5 +1,5 @@
 const passport = require("passport");
-const loginUserController = require("../src/controllers/loginUserController");
+const loginUserController = require("../src/controllers/auth/loginUserController");
 const { loginUser } = require("../src/services/userLoginService");
 
 // Mock the user login service for isolated testing

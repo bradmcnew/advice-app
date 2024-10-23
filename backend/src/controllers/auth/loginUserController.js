@@ -1,5 +1,5 @@
 // Import the loginUser service to handle user authentication
-const { loginUser } = require("../services/userLoginService");
+const { loginUser } = require("../../services/userLoginService");
 
 /**
  * Controller function for handling user login.

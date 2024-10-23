@@ -9,7 +9,7 @@ const {
 } = require("../../middleware/validators/userRegisterValidator");
 
 // Import the controller for user registration
-const registerUserController = require("../../controllers/registerUserController");
+const registerUserController = require("../../controllers/auth/registerUserController");
 
 // Import validation middleware for user login
 const {
@@ -18,16 +18,16 @@ const {
 } = require("../../middleware/validators/userLoginValidator");
 
 // Import the controller for user login
-const loginUserController = require("../../controllers/loginUserController");
+const loginUserController = require("../../controllers/auth/loginUserController");
 
 // Import the controller for user logout
-const logoutUserController = require("../../controllers/logoutUserController");
+const logoutUserController = require("../../controllers/auth/logoutUserController");
 
 // Import the controller for forgot password and reset password
 const {
   forgotPassword,
   resetPassword,
-} = require("../../controllers/resetUserPasswordController");
+} = require("../../controllers/auth/resetUserPasswordController");
 
 // Import the password rate limiter middleware
 const passwordRateLimiter = require("../../utils/passwordRateLimiter");
@@ -37,7 +37,7 @@ const {
   resetPasswordValidationRules,
   validateResetPassword,
 } = require("../../middleware/validators/userResetPasswordValidator");
-const ensureAuthenticated = require("../../middleware/Auth");
+const ensureAuthenticated = require("../../middleware/auth");
 const { authenticate } = require("passport");
 
 // @route POST /api/users/register

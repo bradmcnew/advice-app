@@ -1,5 +1,5 @@
-const resetService = require("../services/userForgotPasswordService");
-const { User } = require("../models");
+const resetService = require("../../services/userForgotPasswordService");
+const { User } = require("../../models");
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
