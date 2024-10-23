@@ -11,6 +11,7 @@ const passport = require("passport");
 const passportConfig = require("./config/passport");
 const cors = require("cors");
 const morgan = require("morgan");
+const path = require("path");
 
 // Load environment variables from .env file
 // This is essential for managing environment-specific settings securely
@@ -53,7 +54,7 @@ app.use(
     resave: false, // Prevents resaving session if unmodified, reducing unnecessary storage operations
     saveUninitialized: false, // Saves a new session even if it’s not modified, useful for tracking new sessions
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+      maxAge: 30 * 60 * 1000, // 30 minutes
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -74,6 +75,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", googleRoutes);
 // profile routes
 app.use("/api/profile", profileRoutes);
+
+// fetch uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 // Error handler middleware
 // Provides a centralized place to handle errors, improving maintainability and debugging

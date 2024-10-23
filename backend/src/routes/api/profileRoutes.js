@@ -10,8 +10,16 @@ const {
   profileValidationRules,
   validateProfile,
 } = require("../../middleware/validators/editProfileValidator");
+const multer = require("multer");
+const path = require("path");
+const {
+  uploadProfilePicture,
+} = require("../../controllers/profile/uploadProfilePictureController");
 
 const router = express.Router();
+
+// Multer configuration for file uploads
+const upload = multer({ dest: path.join(__dirname, "../uploads") });
 
 // GET: View logged-in user's profile (changes based on user type)
 router.get("/", checkAuth, viewProfile);
@@ -25,8 +33,13 @@ router.put(
   editProfile
 );
 
-// // POST: Upload profile picture
-// router.post("/photo-upload", checkAuth, uploadProfilePhoto);
+// POST: Upload profile picture
+router.post(
+  "/photo-upload",
+  checkAuth,
+  upload.single("profile_picture"),
+  uploadProfilePicture
+);
 
 // // POST: Upload resume (only accessible by college students)
 // router.post("/resume-upload", checkAuth, isCollegeStudent, uploadResume);
