@@ -15,7 +15,7 @@ const path = require("path");
 const {
   uploadProfilePicture,
 } = require("../../controllers/profile/uploadProfilePictureController");
-const upload = require("../../config/upload");
+const upload = require("../../config/profilePicUpload");
 
 const router = express.Router();
 
