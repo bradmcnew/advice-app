@@ -15,11 +15,9 @@ const path = require("path");
 const {
   uploadProfilePicture,
 } = require("../../controllers/profile/uploadProfilePictureController");
+const upload = require("../../config/upload");
 
 const router = express.Router();
-
-// Multer configuration for file uploads
-const upload = multer({ dest: path.join(__dirname, "../uploads") });
 
 // GET: View logged-in user's profile (changes based on user type)
 router.get("/", checkAuth, viewProfile);

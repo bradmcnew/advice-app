@@ -1,4 +1,5 @@
 const { UserProfile } = require("../../models");
+const path = require("path");
 
 // Controller to upload a user's profile picture
 const uploadProfilePicture = async (req, res, next) => {

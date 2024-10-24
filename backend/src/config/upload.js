@@ -4,9 +4,10 @@ const path = require("path");
 // Set up multer for file storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads")); // Save files to the uploads folder
+    cb(null, path.join(__dirname, "../uploads/profilePics")); // Save files to the uploads folder
   },
   filename: (req, file, cb) => {
+    console.log("Original Filename:", file.originalname);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
       null,
@@ -26,3 +27,5 @@ const fileFilter = (req, file, cb) => {
 
 // Create the multer upload object
 const upload = multer({ storage: storage, fileFilter: fileFilter });
+
+module.exports = upload;
