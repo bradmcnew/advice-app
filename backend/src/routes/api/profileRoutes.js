@@ -15,7 +15,12 @@ const path = require("path");
 const {
   uploadProfilePicture,
 } = require("../../controllers/profile/uploadProfilePictureController");
-const upload = require("../../config/profilePicUpload");
+const profilePicUpload = require("../../config/profilePicUpload");
+const resumeUpload = require("../../config/resumeUpload");
+const { isCollegeStudent } = require("../../middleware/isCollegeStudent");
+const {
+  uploadResume,
+} = require("../../controllers/profile/uploadResumeController");
 
 const router = express.Router();
 
@@ -35,12 +40,18 @@ router.put(
 router.post(
   "/photo-upload",
   checkAuth,
-  upload.single("profile_picture"),
+  profilePicUpload.single("profile_picture"),
   uploadProfilePicture
 );
 
-// // POST: Upload resume (only accessible by college students)
-// router.post("/resume-upload", checkAuth, isCollegeStudent, uploadResume);
+// POST: Upload resume (only accessible by college students)
+router.post(
+  "/resume-upload",
+  checkAuth,
+  isCollegeStudent,
+  resumeUpload.single("resume"),
+  uploadResume
+);
 
 // // PUT: Manage skills (only accessible by college students)
 // router.put("/skills", checkAuth, isCollegeStudent, manageSkills);
