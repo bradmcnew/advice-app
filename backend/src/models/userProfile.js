@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER, // Link to User ID (integer)
         allowNull: false,
         references: {
-          model: "users", // Reference the `users` table
+          model: "users", // Reference the User model (case-sensitive)
           key: "id",
         },
         onDelete: "CASCADE", // Delete profile if user is deleted
@@ -48,10 +48,6 @@ module.exports = (sequelize) => {
       },
       resume: {
         type: DataTypes.STRING,
-        allowNull: true,
-      },
-      skills: {
-        type: DataTypes.JSON, // Store skills in JSON format
         allowNull: true,
       },
       availability: {

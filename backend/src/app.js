@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/api/userRoutes");
 const googleRoutes = require("./routes/api/googleRoutes");
 const profileRoutes = require("./routes/api/profileRoutes");
+const availabilityRoutes = require("./routes/api/availabilityRoutes");
 
 const errorHandler = require("./middleware/errorHandler");
 const passport = require("passport");
@@ -75,6 +76,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", googleRoutes);
 // profile routes
 app.use("/api/profile", profileRoutes);
+// availability routes
+app.use("/api/availability", availabilityRoutes);
 
 // fetch uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));

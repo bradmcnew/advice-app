@@ -1,6 +1,9 @@
 const { Sequelize } = require("sequelize");
 const UserModel = require("./user"); // Import the User model
 const UserProfileModel = require("./userProfile"); // Import the UserProfile model
+const SkillModel = require("./skill");
+const UserSkillModel = require("./userSkill");
+const UserAvailabilityModel = require("./userAvailability");
 require("dotenv").config(); // Load environment variables from .env file
 
 // Determine the environment (development, test, etc.)
@@ -16,6 +19,9 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 const User = UserModel(sequelize);
 // Initialize the UserProfile model
 const UserProfile = UserProfileModel(sequelize);
+const Skill = SkillModel(sequelize);
+const UserSkill = UserSkillModel(sequelize);
+const UserAvailability = UserAvailabilityModel(sequelize);
 
 // Establish association: User has one Profile, Profile belongs to User
 User.hasOne(UserProfile, {
@@ -24,6 +30,23 @@ User.hasOne(UserProfile, {
 });
 UserProfile.belongsTo(User, {
   foreignKey: "user_id",
+});
+UserProfile.belongsToMany(Skill, {
+  through: UserSkill,
+  foreignKey: "user_profile_id",
+  otherKey: "skill_id",
+});
+Skill.belongsToMany(UserProfile, {
+  through: UserSkill,
+  foreignKey: "skill_id",
+  otherKey: "user_profile_id",
+});
+UserProfile.hasMany(UserAvailability, {
+  foreignKey: "user_profile_id",
+  onDelete: "CASCADE",
+});
+UserAvailability.belongsTo(UserProfile, {
+  foreignKey: "user_profile_id",
 });
 
 // Function to synchronize models with the database
@@ -45,4 +68,11 @@ if (env !== "test") {
 }
 
 // Export the sequelize instance and models for use in other parts of the application
-module.exports = { sequelize, User, UserProfile };
+module.exports = {
+  sequelize,
+  User,
+  UserProfile,
+  Skill,
+  UserSkill,
+  UserAvailability,
+};

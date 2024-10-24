@@ -10,8 +10,6 @@ const {
   profileValidationRules,
   validateProfile,
 } = require("../../middleware/validators/editProfileValidator");
-const multer = require("multer");
-const path = require("path");
 const {
   uploadProfilePicture,
 } = require("../../controllers/profile/uploadProfilePictureController");
@@ -21,6 +19,9 @@ const { isCollegeStudent } = require("../../middleware/isCollegeStudent");
 const {
   uploadResume,
 } = require("../../controllers/profile/uploadResumeController");
+const {
+  manageSkills,
+} = require("../../controllers/profile/editSkillsController");
 
 const router = express.Router();
 
@@ -53,11 +54,8 @@ router.post(
   uploadResume
 );
 
-// // PUT: Manage skills (only accessible by college students)
-// router.put("/skills", checkAuth, isCollegeStudent, manageSkills);
-
-// // PUT: Set availability for consultations (only for college students)
-// router.put("/availability", checkAuth, isCollegeStudent, setAvailability);
+// PUT: Manage skills (only accessible by college students)
+router.put("/skills", checkAuth, isCollegeStudent, manageSkills);
 
 // // GET: View all reviews written by or for the user
 // router.get("/reviews", checkAuth, viewReviews);
