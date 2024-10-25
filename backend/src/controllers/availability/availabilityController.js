@@ -1,7 +1,7 @@
-const { UserAvailability, UserProfile } = require("../../models");
-const { Sequelize } = require("sequelize");
+const { UserAvailability, UserProfile, sequelize } = require("../../models");
 
 const setAvailability = async (req, res, next) => {
+  const transaction = await sequelize.transaction();
   try {
     const userId = req.user.id;
     const { availability } = req.body;
@@ -60,8 +60,11 @@ const setAvailability = async (req, res, next) => {
       {
         validate: true,
         returning: true,
+        transaction,
       }
     );
+
+    await transaction.commit();
 
     console.log("5. Successfully created availability records");
 
@@ -83,15 +86,15 @@ const setAvailability = async (req, res, next) => {
 
 // Controller to update availability for a user
 const updateAvailability = async (req, res, next) => {
-  const userId = req.user.id;
-  const { start_time, end_time, availability_id } = req.body;
+  const { availability_id } = req.params;
+  console.log("availability_id", availability_id);
+  const { start_time, end_time } = req.body;
 
   try {
     // Find the availability to update
     const availability = await UserAvailability.findOne({
       where: {
         id: availability_id,
-        user_profile_id: userId, // Make sure the availability belongs to the logged-in user
       },
     });
 
@@ -99,8 +102,13 @@ const updateAvailability = async (req, res, next) => {
       return res.status(404).json({ message: "Availability not found" });
     }
 
-    availability.start_time = start_time;
-    availability.end_time = end_time;
+    if (start_time !== undefined) {
+      availability.start_time = start_time;
+    }
+
+    if (end_time !== undefined) {
+      availability.end_time = end_time;
+    }
 
     await availability.save();
 
@@ -117,11 +125,12 @@ const updateAvailability = async (req, res, next) => {
 // Controller to fetch availability for a user
 const getAvailability = async (req, res, next) => {
   const { user_profile_id } = req.params;
+  console.log("user_profile_id", user_profile_id);
 
   try {
     // Find availability for the user
     const availability = await UserAvailability.findAll({
-      where: { user_profile_id },
+      where: { user_profile_id: user_profile_id },
     });
 
     if (!availability.length) {
