@@ -22,6 +22,9 @@ const {
 const {
   manageSkills,
 } = require("../../controllers/profile/editSkillsController");
+const {
+  viewPublicProfile,
+} = require("../../controllers/profile/viewPublicProfileController");
 
 const router = express.Router();
 
@@ -60,8 +63,8 @@ router.put("/skills", checkAuth, isCollegeStudent, manageSkills);
 // // GET: View all reviews written by or for the user
 // router.get("/reviews", checkAuth, viewReviews);
 
-// // GET: View another user's public profile
-// router.get("/profile/:id", checkAuth, viewPublicProfile);
+// GET: View another user's public profile
+router.get("/:id", checkAuth, viewPublicProfile);
 
 // // GET: View portfolio of a selected college student
 // router.get("/portfolio", checkAuth, viewPortfolio);
