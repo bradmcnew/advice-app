@@ -1,7 +1,7 @@
 // services/authService.js
 const crypto = require("crypto");
-const { User } = require("../models");
-const { sendPasswordResetEmail } = require("../utils/email");
+const { User } = require("../../models");
+const { sendPasswordResetEmail } = require("../../utils/email");
 
 const generateResetToken = () => {
   return crypto.randomBytes(32).toString("hex");

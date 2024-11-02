@@ -4,6 +4,9 @@ process.env.DB_HOST = "localhost"; // Example DB config for tests, adjust as nec
 
 // Import Sequelize instance for database operations
 const { sequelize } = require("./src/models/index");
+const app = require("./src/app"); // Import your Express app
+
+let server;
 
 // Before all tests run
 beforeAll(async () => {
@@ -13,10 +16,23 @@ beforeAll(async () => {
   // Sync the database schema to ensure it is up-to-date
   // { force: true } clears all tables and re-syncs the schema
   await sequelize.sync({ force: true }); // Create fresh tables for testing
+  server = app.listen(); // Start the Express server
+});
+
+afterEach(async () => {
+  // Clean data between tests
+  await sequelize.truncate({ cascade: true, restartIdentity: true });
 });
 
 // After all tests are done
 afterAll(async () => {
+  if (server) {
+    console.log("Closing server");
+    await new Promise((resolve, reject) => {
+      server.close((err) => (err ? reject(err) : resolve()));
+    });
+    console.log("Server closed");
+  }
   // Close the database connection to clean up resources
   await sequelize.close(); // Properly close the connection to prevent open connections
 });

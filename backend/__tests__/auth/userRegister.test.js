@@ -1,29 +1,34 @@
 const request = require("supertest");
-const app = require("../src/app"); // Adjust the path as needed
-const { sequelize, User } = require("../src/models"); // Adjust the path as needed
-
-beforeAll(async () => {
-  // Sync the database before running tests to ensure a clean state
-  await sequelize.sync({ force: true });
-});
-
-afterAll(async () => {
-  // Close the database connection after all tests are complete
-  await sequelize.close();
-});
+const app = require("../../src/app"); // Adjust the path as needed
+const { sequelize, User } = require("../../src/models"); // Adjust the path as needed
 
 describe("api/users", () => {
+  beforeEach(async () => {
+    // Clean up test users before each test
+    await User.destroy({
+      where: {},
+      cascade: true,
+    });
+  });
+
+  afterAll(async () => {
+    // Close the database connection
+    await sequelize.close();
+  });
+
   describe("POST /register", () => {
+    const registerUser = async (userData) => {
+      return await request(app).post("/api/users/register").send(userData);
+    };
     it("should register a new user with valid data", async () => {
-      const res = await request(app)
-        .post("/api/users/register")
-        .send({
-          username: "testuser",
-          email: "testuser@example.com",
-          password: "securepassword",
-          role: "high_school",
-        })
-        .expect(201); // Expect a 201 Created status
+      const res = await registerUser({
+        username: "testuser",
+        email: "testuser@example.com",
+        password: "securepassword",
+        role: "high_school",
+      });
+
+      expect(res.status).toBe(201);
 
       // Verify the response structure and content
       expect(res.body.message).toBe("User registered successfully");
@@ -35,14 +40,13 @@ describe("api/users", () => {
     });
 
     it("should return error if required fields are missing", async () => {
-      const res = await request(app)
-        .post("/api/users/register")
-        .send({
-          username: "testuser",
-          email: "testuser@example.com",
-          // missing password and role
-        })
-        .expect(400); // Expect a 400 Bad Request status
+      const res = await registerUser({
+        username: "testuser",
+        email: "testuser@example.com",
+        // missing password and role
+      });
+
+      expect(res.status).toBe(400);
 
       // Verify that the response contains error information
       expect(res.body).toHaveProperty("errors");
@@ -50,7 +54,7 @@ describe("api/users", () => {
 
     it("should return error if user already exists", async () => {
       // Register a user for the first time
-      await request(app).post("/api/users/register").send({
+      const res1 = await registerUser({
         username: "testuser",
         email: "testuser@example.com",
         password: "securepassword",
@@ -58,16 +62,16 @@ describe("api/users", () => {
       });
 
       // Try to register the same user again
-      const res = await request(app).post("/api/users/register").send({
+      const res2 = await registerUser({
         username: "testuser",
         email: "testuser@example.com",
-        password: "password",
+        password: "securepassword",
         role: "high_school",
       });
 
       // Expect a 400 status for the duplicate registration
-      expect(res.status).toBe(400);
-      expect(res.body.message).toBe("User already exists"); // Check the error message
+      expect(res2.status).toBe(400);
+      expect(res2.body.message).toBe("User already exists"); // Check the error message
     });
   });
 });

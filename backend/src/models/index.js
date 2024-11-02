@@ -4,6 +4,7 @@ const UserProfileModel = require("./userProfile"); // Import the UserProfile mod
 const SkillModel = require("./skill");
 const UserSkillModel = require("./userSkill");
 const UserAvailabilityModel = require("./userAvailability");
+const CollegeStudentReviewModel = require("./studentReviews");
 require("dotenv").config(); // Load environment variables from .env file
 
 // Determine the environment (development, test, etc.)
@@ -22,6 +23,7 @@ const UserProfile = UserProfileModel(sequelize);
 const Skill = SkillModel(sequelize);
 const UserSkill = UserSkillModel(sequelize);
 const UserAvailability = UserAvailabilityModel(sequelize);
+const CollegeStudentReview = CollegeStudentReviewModel(sequelize);
 
 // Establish association: User has one Profile, Profile belongs to User
 User.hasOne(UserProfile, {
@@ -47,6 +49,25 @@ UserProfile.hasMany(UserAvailability, {
 });
 UserAvailability.belongsTo(UserProfile, {
   foreignKey: "user_profile_id",
+});
+// CollegeStudentReview associations
+UserProfile.hasMany(CollegeStudentReview, {
+  as: "given_reviews",
+  foreignKey: "reviewer_profile_id",
+  onDelete: "CASCADE",
+});
+UserProfile.hasMany(CollegeStudentReview, {
+  as: "received_reviews",
+  foreignKey: "reviewed_profile_id",
+  onDelete: "CASCADE",
+});
+CollegeStudentReview.belongsTo(UserProfile, {
+  as: "reviewer_profile",
+  foreignKey: "reviewer_profile_id",
+});
+CollegeStudentReview.belongsTo(UserProfile, {
+  as: "reviewed_profile",
+  foreignKey: "reviewed_profile_id",
 });
 
 // Function to synchronize models with the database
@@ -75,4 +96,5 @@ module.exports = {
   Skill,
   UserSkill,
   UserAvailability,
+  CollegeStudentReview,
 };

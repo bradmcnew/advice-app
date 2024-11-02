@@ -2,7 +2,7 @@ const { UserProfile } = require("../../models");
 const path = require("path");
 const {
   getUserOldProfilePicturePath,
-} = require("../../services/uploadProfilePicService");
+} = require("../../services/profile/uploadProfilePicService");
 const fs = require("fs").promises;
 
 // Controller to upload a user's profile picture

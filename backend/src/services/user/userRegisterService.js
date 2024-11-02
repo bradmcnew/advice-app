@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User } = require("../../models");
 
 /**
  * Registers a new user with the provided data.

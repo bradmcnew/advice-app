@@ -92,17 +92,6 @@ const profileValidationRules = () => {
   ];
 };
 
-// Middleware to validate the request
-const validateProfile = (req, res, next) => {
-  // Extract validation errors from the request
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  next();
-};
-
 module.exports = {
   profileValidationRules,
-  validateProfile,
 };

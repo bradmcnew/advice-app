@@ -53,18 +53,8 @@ const getAvailabilityValidator = () => {
   ];
 };
 
-// Middleware to validate the request and return errors if present
-const validateAvailability = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  next();
-};
-
 module.exports = {
   setAvailabilityValidator,
   updateAvailabilityValidator,
   getAvailabilityValidator,
-  validateAvailability,
 };

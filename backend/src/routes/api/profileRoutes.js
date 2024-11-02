@@ -9,7 +9,7 @@ const {
 const {
   profileValidationRules,
   validateProfile,
-} = require("../../middleware/validators/editProfileValidator");
+} = require("../../middleware/validators/profile/editProfileValidator");
 const {
   uploadProfilePicture,
 } = require("../../controllers/profile/uploadProfilePictureController");
@@ -25,6 +25,22 @@ const {
 const {
   viewPublicProfile,
 } = require("../../controllers/profile/viewPublicProfileController");
+const {
+  getReviewsForUser,
+} = require("../../controllers/reviews/reviewsController");
+const {
+  profilePicUploadValidationRules,
+} = require("../../middleware/validators/profile/uploadProfilePicValidator");
+const {
+  resumeUploadValidationRules,
+} = require("../../middleware/validators/profile/uploadResumeValidator");
+const {
+  skillsValidationRules,
+} = require("../../middleware/validators/profile/manageSkillsValidator");
+const {
+  publicProfileViewValidationRules,
+} = require("../../controllers/profile/publicProfileValidator");
+const validateRequest = require("../../middleware/validators/validateRequest");
 
 const router = express.Router();
 
@@ -36,7 +52,7 @@ router.put(
   "/edit",
   checkAuth,
   profileValidationRules(),
-  validateProfile,
+  validateRequest,
   editProfile
 );
 
@@ -45,6 +61,8 @@ router.post(
   "/photo-upload",
   checkAuth,
   profilePicUpload.single("profile_picture"),
+  profilePicUploadValidationRules(),
+  validateRequest,
   uploadProfilePicture
 );
 
@@ -54,23 +72,38 @@ router.post(
   checkAuth,
   isCollegeStudent,
   resumeUpload.single("resume"),
+  resumeUploadValidationRules(),
+  validateRequest,
   uploadResume
 );
 
 // PUT: Manage skills (only accessible by college students)
-router.put("/skills", checkAuth, isCollegeStudent, manageSkills);
+router.put(
+  "/skills",
+  checkAuth,
+  isCollegeStudent,
+  skillsValidationRules(),
+  validateRequest,
+  manageSkills
+);
 
 // // GET: View all reviews written by or for the user
 // router.get("/reviews", checkAuth, viewReviews);
 
 // GET: View another user's public profile
-router.get("/:id", checkAuth, viewPublicProfile);
+router.get(
+  "/:id",
+  checkAuth,
+  publicProfileViewValidationRules(),
+  validateRequest,
+  viewPublicProfile
+);
 
 // // GET: View portfolio of a selected college student
 // router.get("/portfolio", checkAuth, viewPortfolio);
 
-// // GET: View all reviews and ratings for a selected college student
-// router.get("/reviews/:id", checkAuth, viewUserReviews);
+// GET: View all reviews and ratings for a selected college student
+router.get("/:user_id/reviews", checkAuth, getReviewsForUser);
 
 // // GET: View available times for consultation with the selected college student
 // router.get("/schedule/:id", checkAuth, viewUserSchedule);

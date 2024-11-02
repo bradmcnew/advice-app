@@ -1,5 +1,5 @@
 // Import the loginUser service to handle user authentication
-const { loginUser } = require("../../services/userLoginService");
+const { loginUser } = require("../../services/user/userLoginService");
 
 /**
  * Controller function for handling user login.
@@ -34,12 +34,7 @@ const loginUserController = async (req, res, next) => {
     // Log the error for debugging purposes
     console.error("Error during user login:", error);
 
-    // Create a new error object for the internal server error
-    const err = new Error("Internal Server Error");
-    err.status = 500; // Set the HTTP status code to 500
-
-    // Pass the error to the next middleware for centralized error handling
-    next(err);
+    res.status(500).json({ message: "An error occurred during login." });
   }
 };
 

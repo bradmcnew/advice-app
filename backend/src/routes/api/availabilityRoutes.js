@@ -10,8 +10,8 @@ const {
   setAvailabilityValidator,
   updateAvailabilityValidator,
   getAvailabilityValidator,
-  validateAvailability,
 } = require("../../middleware/validators/availabilityValidators");
+const validateRequest = require("../../middleware/validators/validateRequest");
 const limiter = require("../../utils/rateLimiter");
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.post(
   checkAuth,
   isCollegeStudent,
   setAvailabilityValidator(),
-  validateAvailability,
+  validateRequest,
   setAvailability
 );
 
@@ -34,7 +34,7 @@ router.put(
   checkAuth,
   isCollegeStudent,
   updateAvailabilityValidator(),
-  validateAvailability,
+  validateRequest,
   updateAvailability
 );
 
@@ -44,7 +44,7 @@ router.get(
   limiter,
   checkAuth,
   getAvailabilityValidator(),
-  validateAvailability,
+  validateRequest,
   getAvailability
 );
 

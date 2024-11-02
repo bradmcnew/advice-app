@@ -1,4 +1,4 @@
-const { UserProfile } = require("../models");
+const { UserProfile } = require("../../models");
 
 async function getUserOldProfilePicturePath(userId) {
   // Find or create the user profile

@@ -5,8 +5,7 @@ const passport = require("passport");
 // Import validation middleware for user registration
 const {
   userValidationRules,
-  validateUser,
-} = require("../../middleware/validators/userRegisterValidator");
+} = require("../../middleware/validators/user/userRegisterValidator");
 
 // Import the controller for user registration
 const registerUserController = require("../../controllers/auth/registerUserController");
@@ -14,8 +13,7 @@ const registerUserController = require("../../controllers/auth/registerUserContr
 // Import validation middleware for user login
 const {
   loginValidationRules,
-  validate,
-} = require("../../middleware/validators/userLoginValidator");
+} = require("../../middleware/validators/user/userLoginValidator");
 
 // Import the controller for user login
 const loginUserController = require("../../controllers/auth/loginUserController");
@@ -36,9 +34,9 @@ const passwordRateLimiter = require("../../utils/passwordRateLimiter");
 const {
   resetPasswordValidationRules,
   validateResetPassword,
-} = require("../../middleware/validators/userResetPasswordValidator");
+} = require("../../middleware/validators/user/userResetPasswordValidator");
 const ensureAuthenticated = require("../../middleware/auth");
-const { authenticate } = require("passport");
+const validateRequest = require("../../middleware/validators/validateRequest");
 
 // @route POST /api/users/register
 // @desc Register a new user
@@ -46,7 +44,7 @@ const { authenticate } = require("passport");
 router.post(
   "/register",
   userValidationRules(),
-  validateUser,
+  validateRequest,
   registerUserController
 );
 
@@ -56,7 +54,7 @@ router.post(
 router.post(
   "/auth/login",
   loginValidationRules(),
-  validate,
+  validateRequest,
   loginUserController
 );
 
@@ -76,7 +74,7 @@ router.post("/auth/forgot-password", passwordRateLimiter, forgotPassword);
 router.post(
   "/auth/reset-password/:token",
   resetPasswordValidationRules(),
-  validateResetPassword,
+  validateRequest,
   resetPassword
 );
 

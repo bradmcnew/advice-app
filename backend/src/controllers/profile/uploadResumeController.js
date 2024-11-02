@@ -1,7 +1,7 @@
 const { UserProfile } = require("../../models");
 const {
   getUserOldResumePath,
-} = require("../../services/uploadProfilePicService");
+} = require("../../services/profile/uploadProfilePicService");
 const path = require("path");
 const fs = require("fs").promises;
 

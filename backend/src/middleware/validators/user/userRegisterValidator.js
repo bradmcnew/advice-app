@@ -37,19 +37,6 @@ const userValidationRules = () => {
   ];
 };
 
-// Middleware to validate the request
-const validateUser = (req, res, next) => {
-  // Extract validation errors from the request
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    // If errors exist, return a 400 response with the error details
-    return res.status(400).json({ errors: errors.array() });
-  }
-  // If no errors, proceed to the next middleware
-  next();
-};
-
 module.exports = {
   userValidationRules,
-  validateUser,
 };

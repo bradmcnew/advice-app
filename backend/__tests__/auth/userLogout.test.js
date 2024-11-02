@@ -1,4 +1,4 @@
-const logoutUserController = require("../src/controllers/auth/logoutUserController");
+const logoutUserController = require("../../src/controllers/auth/logoutUserController");
 
 describe("logoutUserController", () => {
   let req, res, next;

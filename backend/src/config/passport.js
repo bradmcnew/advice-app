@@ -22,7 +22,9 @@ module.exports = (passport) => {
           const isPasswordValid = await user.validatePassword(password);
           if (!isPasswordValid) {
             // If password is invalid, return an error
-            return done(null, false, { message: "Incorrect password." });
+            return done(null, false, {
+              message: "username or password is incorrect.",
+            });
           }
 
           // If everything is valid, return the user

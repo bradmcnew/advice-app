@@ -1,4 +1,4 @@
-const { registerUser } = require("../../services/userRegisterService");
+const { registerUser } = require("../../services/user/userRegisterService");
 
 const registerUserController = async (req, res, next) => {
   try {
@@ -7,6 +7,7 @@ const registerUserController = async (req, res, next) => {
 
     // Check if the registration was successful
     if (!result.success) {
+      console.log("User registration failed:", result.message);
       // Send an error response with appropriate status code and message
       return res
         .status(result.statusCode || 400) // Default to 400 if statusCode is not provided

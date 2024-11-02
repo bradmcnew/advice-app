@@ -1,15 +1,12 @@
 // tests/auth.test.js
 const request = require("supertest");
-const app = require("../src/app"); // Import your Express app
-const { sequelize, User } = require("../src/models"); // Adjust the path as needed
-const { saveResetToken } = require("../src/services/userForgotPasswordService");
+const app = require("../../src/app"); // Import your Express app
+const { sequelize, User } = require("../../src/models"); // Adjust the path as needed
+const {
+  saveResetToken,
+} = require("../../src/services/user/userForgotPasswordService");
 
 describe("Auth Routes", () => {
-  beforeAll(async () => {
-    // Clear and recreate the User table for clean tests
-    await User.sync({ force: true });
-  });
-
   afterAll(async () => {
     // Close your database connection
     await User.sequelize.close();

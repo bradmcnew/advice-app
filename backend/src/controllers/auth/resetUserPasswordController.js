@@ -1,4 +1,4 @@
-const resetService = require("../../services/userForgotPasswordService");
+const resetService = require("../../services/user/userForgotPasswordService");
 const { User } = require("../../models");
 
 const forgotPassword = async (req, res) => {
