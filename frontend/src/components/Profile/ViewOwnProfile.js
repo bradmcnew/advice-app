@@ -93,9 +93,6 @@ const ViewOwnProfile = () => {
           <p>Availability: {profile?.availability || "N/A"}</p>
         </>
       )}
-
-      {/* Display any message */}
-      <p>{profile?.message || "No message"}</p>
     </div>
   );
 };

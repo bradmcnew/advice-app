@@ -156,21 +156,24 @@ const EditProfile = () => {
       </div>
 
       {/* Skills */}
-      <input
-        type="text"
-        name="skills"
-        value={formData.skills}
-        onChange={handleChange}
-        placeholder="Skills (comma-separated)"
-      />
-
-      <input
-        type="text"
-        name="availability"
-        value={formData.availability}
-        onChange={handleChange}
-        placeholder="Availability"
-      />
+      {profile?.role === "college_student" && (
+        <>
+          <input
+            type="text"
+            name="skills"
+            value={formData.skills}
+            onChange={handleChange}
+            placeholder="Skills (comma-separated)"
+          />
+          <input
+            type="text"
+            name="availability"
+            value={formData.availability}
+            onChange={handleChange}
+            placeholder="Availability"
+          />
+        </>
+      )}
       <button type="submit">Save</button>
     </form>
   );
