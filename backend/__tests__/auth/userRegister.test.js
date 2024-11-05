@@ -54,7 +54,7 @@ describe("api/users", () => {
 
     it("should return error if user already exists", async () => {
       // Register a user for the first time
-      const res1 = await registerUser({
+      await registerUser({
         username: "testuser",
         email: "testuser@example.com",
         password: "securepassword",

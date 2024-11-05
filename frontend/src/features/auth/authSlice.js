@@ -1,6 +1,6 @@
 // src/features/auth/authSlice.js
 
-import { createSlice, createAsyncThunk, dispatch } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginUser, logoutUser } from "../../authService";
 import { checkAuthStatus } from "../../axios/auth";
 

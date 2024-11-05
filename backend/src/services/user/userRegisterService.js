@@ -1,4 +1,4 @@
-const { User } = require("../../models");
+const { User, UserProfile } = require("../../models");
 
 /**
  * Registers a new user with the provided data.
@@ -47,6 +47,20 @@ const registerUser = async (userData) => {
 
   // Save the user to the database
   await newUser.save();
+
+  // Create corresponding user profile
+  await UserProfile.create({
+    user_id: newUser.id, // Link the profile to the user
+    first_name: "", // Placeholder or default values, customize as needed
+    last_name: "",
+    bio: "",
+    phone_number: "",
+    location: "",
+    profile_picture: "",
+    social_media_links: {}, // Default as an empty object or specific format
+    resume: "",
+    availability: "",
+  });
 
   // Return success response with user data
   return {

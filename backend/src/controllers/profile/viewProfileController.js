@@ -1,8 +1,7 @@
-const { User, UserProfile } = require("../../models");
-const { Op } = require("sequelize");
+const { User, UserProfile, Skill } = require("../../models");
 
 // Controller to view a user's profile
-const viewProfile = async (req, res, next) => {
+const viewProfile = async (req, res) => {
   try {
     // Fetch authenticated user's id
     const userId = req.user.id;
@@ -14,6 +13,11 @@ const viewProfile = async (req, res, next) => {
           model: User,
           attributes: ["username", "email", "role"], // fields needed from the User model
         },
+        {
+          model: Skill,
+          attributes: ["name"], // fields needed from the Skill model
+          through: { attributes: [] }, // exclude UserSkill join table fields
+        },
       ],
     });
 
@@ -21,6 +25,9 @@ const viewProfile = async (req, res, next) => {
     if (!userProfile) {
       return res.status(404).json({ message: "User profile not found" });
     }
+
+    // map skills into an array of skill names
+    const skills = userProfile.skills.map((skill) => skill.name);
 
     // Send the user profile as a response
     const { role } = userProfile.User;
@@ -34,7 +41,10 @@ const viewProfile = async (req, res, next) => {
       location: userProfile.location,
       profile_picture: userProfile.profile_picture,
       social_media_links: userProfile.social_media_links,
+      role,
     };
+
+    console.log("Role:", role);
 
     if (role === "high_school") {
       profileData.message = "This is a high school user profile";
@@ -43,7 +53,10 @@ const viewProfile = async (req, res, next) => {
       profileData.resume = userProfile.resume;
       profileData.skills = userProfile.skills;
       profileData.availability = userProfile.availability;
+      profileData.skills = skills;
     }
+
+    console.log("API sent:", profileData);
 
     res.status(200).json(profileData);
   } catch (err) {

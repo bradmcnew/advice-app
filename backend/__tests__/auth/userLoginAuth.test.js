@@ -1,98 +1,66 @@
-// userLoginAuth.test.js
-
-/**
- * @file User Login Authentication Tests
- * @description Test suite for user login authentication controller and service
- */
-
 const passport = require("passport");
 const loginUserController = require("../../src/controllers/auth/loginUserController");
 const { loginUser } = require("../../src/services/user/userLoginService");
 
-// Mock the login service to isolate controller testing
-jest.mock("../../src/services/user/userLoginService");
+// Mock the user login service for isolated testing
+jest.mock("../src/services/userLoginService");
 
 describe("loginUserController", () => {
   let req, res, next;
 
   beforeEach(() => {
-    // Setup test request object with required properties and mocked session
+    // Mocking the request object
     req = {
-      logIn: jest.fn((user, cb) => cb(null)),
+      logIn: jest.fn((user, cb) => cb(null)), // Mocking Passport's logIn method
       body: {
         username: "testuser",
         password: "testpassword",
       },
-      // Mock session object for authentication state management
-      session: {
-        destroy: jest.fn((cb) => cb(null)),
-      },
-      // Mock user object matching database model structure
-      user: {
-        dataValues: {
-          id: 1,
-          username: "testuser",
-          email: "test@example.com",
-          password_hash: "hashedpassword", // Should be excluded from responses
-          role: "college_student",
-          created_at: new Date(),
-          updated_at: new Date(),
-          reset_token: null,
-          reset_token_expiration: null,
-          google_id: null,
-        },
-      },
     };
 
-    // Setup mock response object with chainable methods
+    // Mocking the response object
     res = {
-      status: jest.fn(() => res),
-      json: jest.fn(),
+      status: jest.fn(() => res), // Allows chaining
+      json: jest.fn(), // Mock json method
     };
 
+    // Mocking the next function for error handling
     next = jest.fn();
-  });
 
-  // Clear all mocks after each test to prevent state leakage
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  /**
-   * @test Successful login flow
-   * @description Tests the happy path where user credentials are valid
-   */
-  test("should successfully log in the user", async () => {
-    // Prepare expected user data excluding sensitive fields
-    const userData = {
-      username: "testuser",
-      role: "college_student",
-    };
-
-    // Mock successful login response
-    loginUser.mockResolvedValue({
-      success: true,
-      userData,
+    // Mock Passport's authenticate method for testing
+    passport.authenticate = jest.fn().mockImplementation((strategy, cb) => {
+      return (req, res, next) => {
+        cb(null, { id: 1, username: "testuser" }, null); // Simulating successful authentication
+      };
     });
+  });
 
+  afterEach(() => {
+    jest.clearAllMocks(); // Clear mock calls and instances
+    // Optional: add additional teardown logic here if needed
+  });
+
+  test("should successfully log in the user", async () => {
+    // Mock loginUser to return a successful result
+    const user = { id: 1, username: "testuser" };
+    loginUser.mockResolvedValue({ success: true, user });
+
+    // Call the controller
     await loginUserController(req, res, next);
 
-    // Verify successful response with correct status and data
+    // Verify response status and json payload
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      success: true,
       message: "Logged in successfully",
-      user: userData,
+      user,
     });
+
+    // Verify that loginUser was called with correct arguments
     expect(loginUser).toHaveBeenCalledWith(req, res, next);
   });
 
-  /**
-   * @test Failed login handling
-   * @description Tests invalid credentials scenario
-   */
   test("should handle login failure", async () => {
-    // Mock authentication failure
+    // Simulating a login failure scenario
     loginUser.mockResolvedValue({
       success: false,
       message: "Invalid credentials",
@@ -100,27 +68,21 @@ describe("loginUserController", () => {
 
     await loginUserController(req, res, next);
 
-    // Verify unauthorized response
+    // Verify response for login failure
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "Invalid credentials",
-    });
+    expect(res.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
+
+    // Ensure loginUser was called
+    expect(loginUser).toHaveBeenCalledWith(req, res, next);
   });
 
-  /**
-   * @test Server error handling
-   * @description Tests internal server error scenarios
-   */
-  test("should handle server errors", async () => {
-    // Mock server error
-    loginUser.mockRejectedValue(new Error("Server error"));
+  test("should handle authentication errors", async () => {
+    // Mocking the loginUser function to simulate an authentication error
+    loginUser.mockRejectedValue(new Error("Authentication error"));
 
     await loginUserController(req, res, next);
 
-    // Verify error response
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({
-      message: "An error occurred during login.",
-    });
+    // Check that next was called with the error
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
   });
 });

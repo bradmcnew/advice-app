@@ -1,7 +1,7 @@
 // tests/auth.test.js
 const request = require("supertest");
 const app = require("../../src/app"); // Import your Express app
-const { sequelize, User } = require("../../src/models"); // Adjust the path as needed
+const { User } = require("../../src/models"); // Adjust the path as needed
 const {
   saveResetToken,
 } = require("../../src/services/user/userForgotPasswordService");
@@ -27,10 +27,20 @@ describe("Auth Routes", () => {
         role: "high_school",
       });
 
+      const user = await User.findOne({
+        where: { email: "testuser@example.com" },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
       // Send forgot-password request
       const response = await request(app)
         .post("/api/users/auth/forgot-password")
-        .send({ email: userResponse.body.user.email });
+        .send({ email: userResponse.body.email });
+
+      console.log("response: ", response.body);
 
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Password reset email sent");
@@ -85,10 +95,19 @@ describe("Auth Routes", () => {
         password: "securepassword",
         role: "high_school",
       });
-      const user = await User.findByPk(userResponse.body.user.id);
+
+      console.log("userResponsell: ", userResponse.body);
+
+      const user = await User.findOne({
+        where: { email: "testuser@example.com" },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
 
       // Simulate sending a reset token
-      const token = "someValidToken"; // Use a valid token here
+      const token = await user.generateResetToken(); // Generate a valid token
       await saveResetToken(user, token);
 
       const response = await request(app)

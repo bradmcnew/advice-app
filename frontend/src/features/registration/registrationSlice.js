@@ -52,6 +52,8 @@ const registrationSlice = createSlice({
       })
       .addCase(register.fulfilled, (state) => {
         state.loading = false;
+        // Clear the registration state after successful registration
+        registrationSlice.caseReducers.clearRegistrationState(state);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

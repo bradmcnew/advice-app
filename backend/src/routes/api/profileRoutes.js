@@ -1,3 +1,12 @@
+/**
+ * @file ProfileRoutes.js - Profile management routes
+ * @description Handles all profile-related routes including profile viewing, editing,
+ * photo uploads, resume management, and skills management.
+ * @requires express
+ * @requires auth middleware
+ * @module routes/api/profileRoutes
+ */
+
 const express = require("express");
 const checkAuth = require("../../middleware/auth");
 const {
@@ -8,7 +17,6 @@ const {
 } = require("../../controllers/profile/editProfileController");
 const {
   profileValidationRules,
-  validateProfile,
 } = require("../../middleware/validators/profile/editProfileValidator");
 const {
   uploadProfilePicture,
@@ -44,10 +52,29 @@ const validateRequest = require("../../middleware/validators/validateRequest");
 
 const router = express.Router();
 
-// GET: View logged-in user's profile (changes based on user type)
+/**
+ * Profile View Routes
+ * @group Profile - Operations about user profiles
+ */
+
+/**
+ * @route GET /api/profile
+ * @description Get the logged-in user's profile information
+ * @access Private - Requires authentication
+ */
 router.get("/", checkAuth, viewProfile);
 
-// PUT: Update profile details (bio, contact info, profile picture)
+/**
+ * Profile Edit Routes
+ * @group Profile Management - Operations for updating profile information
+ */
+
+/**
+ * @route PUT /api/profile/edit
+ * @description Update user profile details
+ * @access Private - Requires authentication
+ * @validation Requires profile validation rules
+ */
 router.put(
   "/edit",
   checkAuth,
@@ -56,7 +83,18 @@ router.put(
   editProfile
 );
 
-// POST: Upload profile picture
+/**
+ * Media Upload Routes
+ * @group Profile Media - Operations for managing profile media
+ */
+
+/**
+ * @route POST /api/profile/photo-upload
+ * @description Upload user profile picture
+ * @access Private - Requires authentication
+ * @validation Validates file type and size
+ * @middleware Uses multer for file upload
+ */
 router.post(
   "/photo-upload",
   checkAuth,
@@ -66,7 +104,18 @@ router.post(
   uploadProfilePicture
 );
 
-// POST: Upload resume (only accessible by college students)
+/**
+ * Resume Management Routes
+ * @group College Student Features - Operations specific to college students
+ */
+
+/**
+ * @route POST /api/profile/resume-upload
+ * @description Upload college student resume
+ * @access Private - Requires authentication and college student role
+ * @validation Validates file type and size
+ * @middleware Uses multer for file upload
+ */
 router.post(
   "/resume-upload",
   checkAuth,
@@ -77,7 +126,17 @@ router.post(
   uploadResume
 );
 
-// PUT: Manage skills (only accessible by college students)
+/**
+ * Skills Management Routes
+ * @group College Student Features
+ */
+
+/**
+ * @route PUT /api/profile/skills
+ * @description Update college student skills
+ * @access Private - Requires authentication and college student role
+ * @validation Validates skills format and limits
+ */
 router.put(
   "/skills",
   checkAuth,
@@ -87,10 +146,18 @@ router.put(
   manageSkills
 );
 
-// // GET: View all reviews written by or for the user
-// router.get("/reviews", checkAuth, viewReviews);
+/**
+ * Public Profile Routes
+ * @group Profile Viewing - Operations for viewing other users' profiles
+ */
 
-// GET: View another user's public profile
+/**
+ * @route GET /api/profile/:id
+ * @description View another user's public profile
+ * @param {string} id - User ID to view
+ * @access Private - Requires authentication
+ */
+
 router.get(
   "/:id",
   checkAuth,
@@ -99,13 +166,23 @@ router.get(
   viewPublicProfile
 );
 
-// // GET: View portfolio of a selected college student
-// router.get("/portfolio", checkAuth, viewPortfolio);
+/**
+ * Reviews Routes
+ * @group User Reviews - Operations for managing user reviews
+ */
 
-// GET: View all reviews and ratings for a selected college student
+/**
+ * @route GET /api/profile/:user_id/reviews
+ * @description Get all reviews for a specific user
+ * @param {string} user_id - User ID to get reviews for
+ * @access Private - Requires authentication
+ */
 router.get("/:user_id/reviews", checkAuth, getReviewsForUser);
 
-// // GET: View available times for consultation with the selected college student
-// router.get("/schedule/:id", checkAuth, viewUserSchedule);
+// Routes planned for future implementation
+/**
+ * @todo Implement portfolio viewing
+ * @todo Implement consultation schedule viewing
+ */
 
 module.exports = router;

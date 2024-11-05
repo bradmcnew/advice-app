@@ -28,7 +28,7 @@ const profileValidationRules = () => {
 
     // Validate profile_picture (optional, must be a valid URL)
     body("profile_picture")
-      .optional()
+      .optional({ nullable: true, checkFalsy: true })
       .isURL()
       .withMessage("Invalid URL for profile picture")
       .trim(),

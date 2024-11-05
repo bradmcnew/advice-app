@@ -7,6 +7,8 @@ import { combineReducers } from "redux"; // Import combineReducers
 import authReducer from "../features/auth/authSlice";
 import registrationReducer from "../features/registration/registrationSlice";
 import passwordResetReducer from "../features/forgotPassword/forgotPasswordSlice";
+import profileReducer from "../features/profile/profileSlice";
+import resetStateMiddleware from "../utils/resetStateMiddleware";
 
 // Step 1: Create the Persist Configuration
 const persistConfig = {
@@ -19,8 +21,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   // Use combineReducers here
   auth: authReducer,
-  registration: registrationReducer,
   passwordReset: passwordResetReducer,
+  profile: profileReducer,
   // Add other reducers here as needed
 });
 
@@ -36,7 +38,7 @@ const store = configureStore({
         // Ignore these action types that may have non-serializable values
         ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
       },
-    }),
+    }).concat(resetStateMiddleware), // Add the middleware
 });
 
 // Step 5: Create the Persistor

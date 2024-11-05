@@ -11,16 +11,20 @@ import ResetPassword from "./components/Auth/ResetPassword";
 import RedirectHandler from "./components/Auth/RedirectHandler";
 import PasswordResetRequest from "./components/Auth/ResetPasswordRequest";
 import About from "./components/Index/About";
+import ViewOwnProfile from "./components/Profile/ViewOwnProfile";
+import ViewPublicProfile from "./components/Profile/viewPublicProfile";
+import EditProfile from "./components/Profile/EditProfile";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="App">
-          <h1>User Registration</h1>
+          <h1>App Name</h1>
           <Navbar />
           <Routes>
             <Route path="/about" element={<About />} />
+            {/* auth routes */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/auth/redirect" element={<RedirectHandler />} />
@@ -36,6 +40,19 @@ function App() {
             <Route
               path="/auth/reset-password/:token"
               element={<ResetPassword />}
+            />
+            {/* Profile Routes */}
+            <Route
+              path="/profile"
+              element={<ProtectedRoute element={<ViewOwnProfile />} />}
+            />
+            {/* <Route
+              path="/profile/:id"
+              element={<ProtectedRoute element={<ViewPublicProfile />} />}
+            /> */}
+            <Route
+              path="/profile/edit"
+              element={<ProtectedRoute element={<EditProfile />} />}
             />
             {/* catch all route */}
             <Route path="*" element={<h1>Not Found</h1>} />

@@ -1,4 +1,4 @@
-const { UserProfile } = require("../../models");
+const { UserProfile, Skill, User } = require("../../models");
 
 // Controller to edit or create a user's profile
 const editProfile = async (req, res, next) => {
@@ -13,9 +13,9 @@ const editProfile = async (req, res, next) => {
       phone_number,
       location,
       profile_picture,
-      social_media_links,
+      social_media_links, // JSON object
       resume,
-      skills,
+      skills, // array of skill names
       availability,
     } = req.body;
 
@@ -31,7 +31,6 @@ const editProfile = async (req, res, next) => {
         profile_picture,
         social_media_links,
         resume,
-        skills,
         availability,
       },
     });
@@ -47,20 +46,44 @@ const editProfile = async (req, res, next) => {
         profile_picture,
         social_media_links,
         resume,
-        skills,
         availability,
-      });
-
-      return res.status(200).json({
-        message: "User profile updated successfully",
-        user_profile: userProfile,
       });
     }
 
+    // update or create skills and link them to the user profile
+    if (skills && skills.length > 0) {
+      const existingSkills = await Skill.findAll({
+        where: { name: skills },
+      });
+      const existingSkillNames = existingSkills.map((skill) => skill.name);
+      const newSkills = skills
+        .filter((skill) => !existingSkillNames.includes(skill))
+        .map((name) => ({ name }));
+
+      await Skill.bulkCreate(newSkills, { ignoreDuplicates: true });
+
+      const allSkills = await Skill.findAll({
+        where: { name: skills },
+      });
+
+      await userProfile.setSkills(allSkills);
+    }
+
+    const updatedProfile = await UserProfile.findByPk(userProfile.id, {
+      include: [
+        { model: Skill, attributes: ["name"], through: { attributes: [] } },
+        { model: User, attributes: ["username", "email", "role"] },
+      ],
+    });
+
+    console.log("Updated profile:", updatedProfile);
+
     // If profile was created, return success message
     res.status(201).json({
-      message: "User profile created successfully",
-      user_profile: userProfile,
+      message: created
+        ? "User profile created successfully"
+        : "User profile updated successfully",
+      user_profile: updatedProfile,
     });
   } catch (err) {
     console.error("Error updating or creating user profile:", err);
