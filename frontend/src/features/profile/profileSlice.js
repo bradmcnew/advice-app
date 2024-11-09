@@ -19,7 +19,9 @@ export const fetchPublicProfile = createAsyncThunk(
   "profile/fetchPublicProfile",
   async (id, { rejectWithValue }) => {
     try {
+      console.log("fetchPublicProfile");
       const response = await axiosInstance.get(`/profile/${id}`);
+      console.log("response after", response);
       return response.data;
     } catch (err) {
       return rejectWithValue();
@@ -44,6 +46,7 @@ const profileSlice = createSlice({
   name: "profile",
   initialState: {
     profile: null,
+    publicProfile: null,
     loading: false,
     error: null,
   },
@@ -72,7 +75,7 @@ const profileSlice = createSlice({
       })
       .addCase(fetchPublicProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload;
+        state.publicProfile = action.payload;
       })
       .addCase(fetchPublicProfile.rejected, (state, action) => {
         state.loading = false;

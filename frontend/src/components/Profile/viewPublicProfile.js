@@ -4,36 +4,85 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchPublicProfile } from "../../features/profile/profileSlice";
 
+/**
+ * ViewPublicProfile Component
+ * Displays a user's public profile information
+ * Fetches profile data based on URL parameter ID
+ */
 const ViewPublicProfile = () => {
+  // Get user ID from URL parameters
   const { id } = useParams();
+  console.log("id", id); // Debug log for ID
+
+  // Initialize Redux dispatch
   const dispatch = useDispatch();
-  const { profile, loading, error } = useSelector((state) => state.profile);
 
+  // Select profile data, loading state, and error state from Redux store
+  const { publicProfile, loading, error } = useSelector(
+    (state) => state.profile
+  );
+
+  // Fetch profile data when component mounts or when ID changes
   useEffect(() => {
+    console.log("dispatching fetchPublicProfile"); // Debug log for fetch action
     dispatch(fetchPublicProfile(id));
-  }, [dispatch, id]);
+  }, [dispatch, id]); // Dependencies ensure effect runs only when necessary
 
+  console.log("publicProfile", publicProfile); // Debug log for profile data
+
+  // Show loading state while fetching data
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  // Show error message if fetch fails
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error.messsage}</div>;
   }
 
+  // Show message if no profile data is found
+  if (!publicProfile) {
+    return <div>No profile found</div>;
+  }
+
+  // Render profile information
   return (
     <div className="profile">
+      {/* Display user's full name */}
       <h2>
-        {profile.first_name} {profile.last_name}'s Profile
+        {publicProfile.profile.first_name} {publicProfile.profile.last_name}'s
+        Profile
       </h2>
-      <p>Bio: {profile.bio}</p>
-      <p>Location: {profile.location}</p>
+
+      {/* Basic profile information */}
+      <p>Bio: {publicProfile.profile.bio}</p>
+      <p>Location: {publicProfile.profile.location}</p>
+
+      {/* Profile picture with alt text for accessibility */}
       <p>
-        Profile Picture: <img src={profile.profile_picture} alt="Profile" />
+        Profile Picture:{" "}
+        <img src={publicProfile.profile.profile_picture} alt="Profile" />
       </p>
-      <p>Social Media Links: {profile.social_media_links}</p>
+
+      {/* Social media links section */}
+      <div>
+        Social Media Links: {/* Only render social media links if they exist */}
+        {publicProfile.profile.social_media_links &&
+          Object.entries(publicProfile.profile.social_media_links).map(
+            ([platform, url]) => (
+              // Use platform as unique key for React list rendering
+              <div key={platform}>
+                {/* Open links in new tab with security attributes */}
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  {platform}
+                </a>
+              </div>
+            )
+          )}
+      </div>
     </div>
   );
 };
 
+// Export component for use in other parts of the application
 export default ViewPublicProfile;

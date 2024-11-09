@@ -46,10 +46,10 @@ function App() {
               path="/profile"
               element={<ProtectedRoute element={<ViewOwnProfile />} />}
             />
-            {/* <Route
+            <Route
               path="/profile/:id"
               element={<ProtectedRoute element={<ViewPublicProfile />} />}
-            /> */}
+            />
             <Route
               path="/profile/edit"
               element={<ProtectedRoute element={<EditProfile />} />}

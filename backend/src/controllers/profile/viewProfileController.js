@@ -44,8 +44,6 @@ const viewProfile = async (req, res) => {
       role,
     };
 
-    console.log("Role:", role);
-
     if (role === "high_school") {
       profileData.message = "This is a high school user profile";
     } else if (role === "college_student") {
@@ -55,8 +53,6 @@ const viewProfile = async (req, res) => {
       profileData.availability = userProfile.availability;
       profileData.skills = skills;
     }
-
-    console.log("API sent:", profileData);
 
     res.status(200).json(profileData);
   } catch (err) {

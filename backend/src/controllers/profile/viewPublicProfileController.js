@@ -1,6 +1,6 @@
 const { UserProfile } = require("../../models");
 
-const viewPublicProfile = async (req, res, next) => {
+const viewPublicProfile = async (req, res) => {
   try {
     const { id } = req.params;
     console.log("Viewing public profile:", id);
@@ -21,6 +21,8 @@ const viewPublicProfile = async (req, res, next) => {
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
     }
+
+    console.log("API sent:", profile);
 
     // Send the retrieved profile data
     return res.status(200).json({
