@@ -175,3 +175,326 @@
 .loading {
   animation: pulse 1.5s infinite;
 }
+
+.resume-upload-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.resume-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.file-input-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.file-input-label:hover {
+  background-color: #0056b3;
+}
+
+.file-name {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.upload-button {
+  padding: 0.5rem 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upload-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.upload-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.edit-profile-form {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.form-section h3 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+/* Input Styles */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Upload Section Styles */
+.upload-section {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+  text-align: center;
+}
+
+.current-profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 1rem auto;
+  display: block;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #4a90e2;
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+.file-input-label:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.selected-file {
+  display: block;
+  margin-top: 0.75rem;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Resume Link Styles */
+.current-resume-link {
+  display: inline-block;
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  color: #4a90e2;
+  text-decoration: none;
+  background: #e8f0fe;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.current-resume-link:hover {
+  background: #d0e3ff;
+  text-decoration: none;
+}
+
+/* Submit Button Styles */
+.submit-button {
+  width: 100%;
+  padding: 1rem;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 2rem;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Social Media Section Styles */
+.social-media-section input {
+  padding-left: 2.5rem;
+  background-position: 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25rem;
+}
+
+/* Loading and Error States */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.error-message {
+  color: #dc3545;
+  padding: 1rem;
+  border-radius: 4px;
+  background: #f8d7da;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .edit-profile-form {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .form-section {
+    padding: 1rem;
+  }
+
+  .upload-section {
+    padding: 1rem;
+  }
+
+  .current-profile-pic {
+    width: 120px;
+    height: 120px;
+  }
+
+  .file-input-label {
+    padding: 0.5rem 1rem;
+  }
+
+  .submit-button {
+    padding: 0.75rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.edit-profile-form {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Hover Effects */
+.form-section:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.upload-section:hover {
+  border-color: #4a90e2;
+}
+
+/* Focus States */
+.form-section:focus-within {
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+.skills-list {
+  display: flex;
+  flex-direction: column; /* Change to column layout */
+  gap: 0.5rem; /* Space between skills */
+  margin: 1rem 0;
+}
+
+.skill-tag {
+  display: inline-block;
+  background: #f0f2f5;
+  color: #2c3e50;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: fit-content; /* Make width fit the content */
+  transition: all 0.2s ease;
+}
+
+.skill-tag:hover {
+  background: #e2e6ea;
+  transform: translateX(5px); /* Optional: adds a subtle hover effect */
+}
+
+.skill-tag {
+  border-left: 3px solid #4a90e2;
+}

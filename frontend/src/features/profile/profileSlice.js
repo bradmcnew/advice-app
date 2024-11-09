@@ -49,6 +49,26 @@ export const uploadProfilePicture = createAsyncThunk(
   }
 );
 
+export const uploadResume = createAsyncThunk(
+  "profile/uploadResume",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        "/profile/resume-upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Upload failed");
+    }
+  }
+);
+
 // Async thunk to edit profile data
 export const editProfile = createAsyncThunk(
   "profile/editProfile",
@@ -124,6 +144,20 @@ const profileSlice = createSlice({
         state.profile.profile_picture = action.payload.profile_picture;
       })
       .addCase(uploadProfilePicture.rejected, (state, action) => {
+        state.uploadLoading = false;
+        state.uploadError = action.payload;
+      })
+      .addCase(uploadResume.pending, (state) => {
+        state.uploadLoading = true;
+        state.uploadError = null;
+      })
+      .addCase(uploadResume.fulfilled, (state, action) => {
+        state.uploadLoading = false;
+        if (state.profile) {
+          state.profile.resume = action.payload.resume;
+        }
+      })
+      .addCase(uploadResume.rejected, (state, action) => {
         state.uploadLoading = false;
         state.uploadError = action.payload;
       });

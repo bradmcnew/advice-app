@@ -1,4 +1,4 @@
-const { UserProfile } = require("../../models");
+const { UserProfile, User, Skill, UserAvailability } = require("../../models");
 
 const viewPublicProfile = async (req, res) => {
   try {
@@ -8,6 +8,21 @@ const viewPublicProfile = async (req, res) => {
     // Fetch user's public profile by profile_id
     const profile = await UserProfile.findOne({
       where: { id: id },
+      include: [
+        {
+          model: User,
+          attributes: ["role"],
+        },
+        {
+          model: Skill,
+          attributes: ["name"],
+          through: { attributes: [] },
+        },
+        {
+          model: UserAvailability,
+          attributes: ["day_of_week", "start_time", "end_time"],
+        },
+      ],
       attributes: [
         "first_name",
         "last_name",
@@ -19,19 +34,40 @@ const viewPublicProfile = async (req, res) => {
     });
 
     if (!profile) {
-      return res.status(404).json({ message: "Profile not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Profile not found" });
     }
 
-    console.log("API sent:", profile);
+    const publicProfile = {
+      ...profile.toJSON(),
+      role: profile.User?.role,
+      skills: profile.Skills?.map((skill) => skill.name) || [],
+      availability:
+        profile.UserAvailabilities?.map((slot) => ({
+          day_of_week: slot.day_of_week,
+          start_time: slot.start_time,
+          end_time: slot.end_time,
+        })) || [],
+      social_media_links: profile.social_media_links || {},
+    };
+
+    delete publicProfile.User;
+    delete publicProfile.Skills;
+    delete publicProfile.UserAvailabilities;
+
+    console.log("API sending profile:", profile);
 
     // Send the retrieved profile data
     return res.status(200).json({
+      success: true,
       message: "Profile found",
       profile: profile,
     });
   } catch (err) {
     console.error("Error viewing public profile:", err);
     return res.status(500).json({
+      success: false,
       message: "Failed to retrieve profile",
       error: err.message,
     });

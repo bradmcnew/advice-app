@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editProfile, fetchProfile } from "../../features/profile/profileSlice";
+import {
+  editProfile,
+  fetchProfile,
+  uploadProfilePicture,
+  uploadResume,
+} from "../../features/profile/profileSlice";
 import { useNavigate } from "react-router-dom";
+import "../../styles/Profile.css";
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { profile, loading, error } = useSelector((state) => state.profile);
+  const { profile, loading, error, uploadLoading } = useSelector(
+    (state) => state.profile
+  );
+
+  // state for files
+  const [selectedProfilePic, setSelectedProfilePic] = useState(null);
+  const [selectedResume, setSelectedResume] = useState(null);
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -14,14 +26,12 @@ const EditProfile = () => {
     bio: "",
     phone_number: "",
     location: "",
-    profile_picture: "",
     social_media_links: {
       linkedin: "",
       twitter: "",
       facebook: "",
       instagram: "",
     },
-    resume: "",
     skills: "",
     availability: "",
   });
@@ -38,14 +48,12 @@ const EditProfile = () => {
         bio: profile.bio || "",
         phone_number: profile.phone_number || "",
         location: profile.location || "",
-        profile_picture: profile.profile_picture || "",
         social_media_links: profile.social_media_links || {
           linkedin: "",
           twitter: "",
           facebook: "",
           instagram: "",
         },
-        resume: profile.resume || "",
         skills: profile.skills ? profile.skills.join(", ") : "",
         availability: profile.availability || "",
       });
@@ -65,16 +73,64 @@ const EditProfile = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleProfilePicSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+      setSelectedProfilePic(file);
+    }
+  };
+
+  const handleResumeSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type !== "application/pdf") {
+        alert("Please select a PDF file");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        return;
+      }
+      setSelectedResume(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedFormData = {
-      ...formData,
-      social_media_links: { ...formData.social_media_links },
-      skills: formData.skills.split(",").map((skill) => skill.trim()),
-    };
-    dispatch(editProfile(updatedFormData));
-    dispatch(fetchProfile());
-    navigate("/profile");
+    try {
+      // Handle file uploads
+      if (selectedProfilePic) {
+        const picFormData = new FormData();
+        picFormData.append("profile_picture", selectedProfilePic);
+        await dispatch(uploadProfilePicture(picFormData)).unwrap();
+      }
+
+      if (selectedResume) {
+        const resumeFormData = new FormData();
+        resumeFormData.append("resume", selectedResume);
+        await dispatch(uploadResume(resumeFormData)).unwrap();
+      }
+
+      const updatedFormData = {
+        ...formData,
+        social_media_links: { ...formData.social_media_links },
+        skills: formData.skills.split(",").map((skill) => skill.trim()),
+      };
+      await dispatch(editProfile(updatedFormData)).unwrap();
+
+      await dispatch(fetchProfile());
+      navigate("/profile");
+    } catch (error) {
+      alert(error.message || "Failed to update profile");
+    }
   };
 
   if (loading) {
@@ -87,6 +143,36 @@ const EditProfile = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Profile picture section */}
+      <div className="upload-section">
+        <h3>Profile Picture</h3>
+        {profile?.profile_picture && (
+          <img
+            src={`${process.env.REACT_APP_SERVER_URL}${profile.profile_picture}`}
+            alt="Current profile"
+            className="current-profile-pic"
+          />
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleProfilePicSelect}
+          id="profile-pic-upload"
+          className="file-input"
+        />
+        <label htmlFor="profile-pic-upload" className="file-input-label">
+          {profile?.profile_picture
+            ? "Change Profile Picture"
+            : "Upload Profile Picture"}{" "}
+        </label>
+        {selectedProfilePic && (
+          <span className="selected-file">
+            Selected: {selectedProfilePic.name}
+          </span>
+        )}
+      </div>
+
+      {/* Basic Info */}
       <input
         type="text"
         name="first_name"
@@ -155,23 +241,56 @@ const EditProfile = () => {
         />
       </div>
 
-      {/* Skills */}
+      {/* College Student Section */}
       {profile?.role === "college_student" && (
         <>
-          <input
-            type="text"
-            name="skills"
-            value={formData.skills}
-            onChange={handleChange}
-            placeholder="Skills (comma-separated)"
-          />
-          <input
-            type="text"
-            name="availability"
-            value={formData.availability}
-            onChange={handleChange}
-            placeholder="Availability"
-          />
+          <div className="form-section">
+            <h3>College Student Information</h3>
+            <input
+              type="text"
+              name="skills"
+              value={formData.skills}
+              onChange={handleChange}
+              placeholder="Skills (comma-separated)"
+            />
+            <input
+              type="text"
+              name="availability"
+              value={formData.availability}
+              onChange={handleChange}
+              placeholder="Availability"
+            />
+          </div>
+
+          {/* Resume Upload */}
+          <div className="upload-section">
+            <h3>Resume</h3>
+            {profile?.resume && (
+              <a
+                href={`${process.env.REACT_APP_SERVER_URL}${profile.resume}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="current-resume-link"
+              >
+                View Current Resume
+              </a>
+            )}
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={handleResumeSelect}
+              id="resume-upload"
+              className="file-input"
+            />
+            <label htmlFor="resume-upload" className="file-input-label">
+              {profile?.resume ? "Change Resume" : "Upload Resume"} (PDF only)
+            </label>
+            {selectedResume && (
+              <span className="selected-file">
+                Selected: {selectedResume.name}
+              </span>
+            )}
+          </div>
         </>
       )}
       <button type="submit">Save</button>

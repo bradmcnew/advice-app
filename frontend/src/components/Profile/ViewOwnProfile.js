@@ -70,10 +70,19 @@ const ViewOwnProfile = () => {
 
       {profile?.role === "college_student" && (
         <div className="college-student-section">
-          <div className="resume-section">
-            <h3>Resume:</h3>
-            <p>{profile?.User?.resume}</p>
-          </div>
+          {profile.resume && (
+            <div className="current-resume">
+              <h3>Current Resume</h3>
+              <a
+                href={`${process.env.REACT_APP_SERVER_URL}${profile.resume}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="resume-link"
+              >
+                View Current Resume
+              </a>
+            </div>
+          )}
 
           {/* Render skills if they exist */}
           <div>

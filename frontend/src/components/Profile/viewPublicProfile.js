@@ -6,6 +6,25 @@ import { fetchPublicProfile } from "../../features/profile/profileSlice";
 import "../../styles/Profile.css";
 
 /**
+ * Formats a time string into a readable format
+ * @param {string} timeString - Time string in HH:MM:SS format
+ * @returns {string} Formatted time string
+ */
+const formatTime = (timeString) => {
+  if (!timeString) return "";
+  try {
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } catch (error) {
+    console.error("Error formatting time:", error);
+    return timeString;
+  }
+};
+
+/**
  * ViewPublicProfile Component
  * Displays a user's public profile information
  * Fetches profile data based on URL parameter ID
@@ -67,6 +86,41 @@ const ViewPublicProfile = () => {
           alt="Profile"
         />
       </p>
+
+      {/* Skills Section */}
+      {Array.isArray(publicProfile.profile.skills) &&
+        publicProfile.profile.skills?.length > 0 && (
+          <div className="profile-section">
+            <h3>Skills</h3>
+            <div className="skills-list">
+              {publicProfile.profile.skills.map((skill, index) => (
+                <span key={index} className="skill-tag">
+                  {skill.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+      {/* Availability Section */}
+      {publicProfile.profile.availability?.length > 0 && (
+        <div className="profile-section">
+          <h3>Availability</h3>
+          <div className="availability-list">
+            {publicProfile.profile.availability.map((slot, index) => (
+              <div key={index} className="availability-slot">
+                <span className="day">
+                  {slot.day_of_week.charAt(0).toUpperCase() +
+                    slot.day_of_week.slice(1)}
+                </span>
+                <span className="time">
+                  {formatTime(slot.start)} - {formatTime(slot.end)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Social media links section */}
       <div className="social-links">
