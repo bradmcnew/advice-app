@@ -21,7 +21,7 @@ const {
 const {
   uploadProfilePicture,
 } = require("../../controllers/profile/uploadProfilePictureController");
-const profilePicUpload = require("../../config/profilePicUpload");
+const { upload } = require("../../config/profilePicUpload");
 const resumeUpload = require("../../config/resumeUpload");
 const { isCollegeStudent } = require("../../middleware/isCollegeStudent");
 const {
@@ -98,7 +98,7 @@ router.put(
 router.post(
   "/photo-upload",
   checkAuth,
-  profilePicUpload.single("profile_picture"),
+  upload.single("profile_picture"),
   profilePicUploadValidationRules(),
   validateRequest,
   uploadProfilePicture

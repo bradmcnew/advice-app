@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../../features/profile/profileSlice";
+import "../../styles/Profile.css";
 
 const ViewOwnProfile = () => {
   const dispatch = useDispatch();
@@ -18,15 +19,11 @@ const ViewOwnProfile = () => {
   //   return <div>Error: {error}</div>;
   // }
 
-  console.log("profile", profile);
-  console.log("skills", profile?.skills);
+  if (!profile) {
+    return <div>No profile found</div>;
+  }
 
-  // profile?.skills?.map((skill) => {
-  //   console.log("skill", skill.name);
-  // });
-
-  // console.log("user auth", profile?.User);
-  console.log("role", profile?.User?.role);
+  console.log("prof pic: ", profile.profile_picture);
 
   return (
     <div className="profile">
@@ -40,14 +37,17 @@ const ViewOwnProfile = () => {
       <p>
         Profile Picture:{" "}
         {profile?.profile_picture ? (
-          <img src={profile.profile_picture} alt="Profile" />
+          <img
+            src={`${process.env.REACT_APP_SERVER_URL}${profile.profile_picture}`}
+            alt="Profile"
+          />
         ) : (
           "No profile picture available"
         )}
       </p>
 
       {/* Render social media links if they exist */}
-      <div>
+      <div className="social-links">
         <h3>Social Media Links:</h3>
         {profile?.social_media_links &&
         typeof profile?.social_media_links === "object" ? (
@@ -69,8 +69,8 @@ const ViewOwnProfile = () => {
       </div>
 
       {profile?.role === "college_student" && (
-        <>
-          <div>
+        <div className="college-student-section">
+          <div className="resume-section">
             <h3>Resume:</h3>
             <p>{profile?.User?.resume}</p>
           </div>
@@ -90,8 +90,10 @@ const ViewOwnProfile = () => {
             )}
           </div>
 
-          <p>Availability: {profile?.availability || "N/A"}</p>
-        </>
+          <p className="availability">
+            Availability: {profile?.availability || "N/A"}
+          </p>
+        </div>
       )}
     </div>
   );

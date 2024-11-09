@@ -1,5 +1,20 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs").promises;
+
+const cleanupOldProfilePic = async (oldPicPath) => {
+  if (!oldPicPath) {
+    return;
+  }
+
+  try {
+    const fullPath = path.join(__dirname, "../", oldPicPath);
+    await fs.unlink(fullPath);
+    console.log("Old profile picture deleted successfully");
+  } catch (err) {
+    console.error("Error deleting old profile picture:", err);
+  }
+};
 
 // Set up multer for file storage
 const storage = multer.diskStorage({
@@ -28,4 +43,4 @@ const fileFilter = (req, file, cb) => {
 // Create the multer upload object
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-module.exports = upload;
+module.exports = { upload, cleanupOldProfilePic };

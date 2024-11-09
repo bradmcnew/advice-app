@@ -1,9 +1,9 @@
 const { UserProfile } = require("../../models");
-const path = require("path");
+
 const {
   getUserOldProfilePicturePath,
 } = require("../../services/profile/uploadProfilePicService");
-const fs = require("fs").promises;
+const { cleanupOldProfilePic } = require("../../config/profilePicUpload");
 
 // Controller to upload a user's profile picture
 const uploadProfilePicture = async (req, res, next) => {
@@ -26,14 +26,7 @@ const uploadProfilePicture = async (req, res, next) => {
 
     // Delete the old profile picture if it exists
     if (oldProfilePicturePath) {
-      const fullPath = path.join(__dirname, "../../", oldProfilePicturePath);
-
-      try {
-        await fs.unlink(fullPath);
-        console.log("Old profile picture deleted successfully");
-      } catch (err) {
-        console.error("Error deleting old profile picture:", err);
-      }
+      await cleanupOldProfilePic(oldProfilePicturePath);
     } else {
       console.log("No old profile picture found");
     }

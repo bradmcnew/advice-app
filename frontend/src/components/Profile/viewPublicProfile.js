@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchPublicProfile } from "../../features/profile/profileSlice";
+import "../../styles/Profile.css";
 
 /**
  * ViewPublicProfile Component
@@ -61,11 +62,14 @@ const ViewPublicProfile = () => {
       {/* Profile picture with alt text for accessibility */}
       <p>
         Profile Picture:{" "}
-        <img src={publicProfile.profile.profile_picture} alt="Profile" />
+        <img
+          src={`${process.env.REACT_APP_SERVER_URL}${publicProfile.profile.profile_picture}`}
+          alt="Profile"
+        />
       </p>
 
       {/* Social media links section */}
-      <div>
+      <div className="social-links">
         Social Media Links: {/* Only render social media links if they exist */}
         {publicProfile.profile.social_media_links &&
           Object.entries(publicProfile.profile.social_media_links).map(

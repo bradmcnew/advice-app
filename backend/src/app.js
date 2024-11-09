@@ -69,6 +69,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 // API routes
 // Mounts the userRoutes middleware to handle routes under /api/users
 app.use("/api/users", userRoutes);
