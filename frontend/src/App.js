@@ -12,7 +12,7 @@ import RedirectHandler from "./components/Auth/RedirectHandler";
 import PasswordResetRequest from "./components/Auth/ResetPasswordRequest";
 import About from "./components/Index/About";
 import ViewOwnProfile from "./components/Profile/ViewOwnProfile";
-import ViewPublicProfile from "./components/Profile/viewPublicProfile";
+import ViewPublicProfile from "./components/Profile/ViewPublicProfile";
 import EditProfile from "./components/Profile/EditProfile";
 import PhotoUpload from "./components/Profile/PhotoUpload";
 

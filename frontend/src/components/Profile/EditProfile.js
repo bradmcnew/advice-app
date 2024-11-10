@@ -8,6 +8,8 @@ import {
 } from "../../features/profile/profileSlice";
 import { useNavigate } from "react-router-dom";
 import "../../styles/Profile.css";
+import AvailabilityForm from "./AvailabilityForm";
+import { setAvailability } from "../../features/availability/availabilitySlice";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const EditProfile = () => {
   const { profile, loading, error, uploadLoading } = useSelector(
     (state) => state.profile
   );
+  const { availability } = useSelector((state) => state.availability);
 
   // state for files
   const [selectedProfilePic, setSelectedProfilePic] = useState(null);
@@ -33,7 +36,6 @@ const EditProfile = () => {
       instagram: "",
     },
     skills: "",
-    availability: "",
   });
 
   useEffect(() => {
@@ -106,7 +108,7 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Handle file uploads
+      // Handle file uploads first
       if (selectedProfilePic) {
         const picFormData = new FormData();
         picFormData.append("profile_picture", selectedProfilePic);
@@ -119,6 +121,12 @@ const EditProfile = () => {
         await dispatch(uploadResume(resumeFormData)).unwrap();
       }
 
+      // Filter out empty availability slots
+      const validAvailability = availability.filter(
+        (slot) => slot.start_time && slot.end_time
+      );
+
+      // Update profile
       const updatedFormData = {
         ...formData,
         social_media_links: { ...formData.social_media_links },
@@ -126,9 +134,15 @@ const EditProfile = () => {
       };
       await dispatch(editProfile(updatedFormData)).unwrap();
 
+      // Set availability if there are valid slots
+      if (validAvailability.length > 0) {
+        await dispatch(setAvailability(validAvailability)).unwrap();
+      }
+
       await dispatch(fetchProfile());
       navigate("/profile");
     } catch (error) {
+      console.error(error);
       alert(error.message || "Failed to update profile");
     }
   };
@@ -138,6 +152,7 @@ const EditProfile = () => {
   }
 
   if (error) {
+    console.error(error);
     return <div>Error: {error.message || JSON.stringify(error)}</div>;
   }
 
@@ -253,13 +268,9 @@ const EditProfile = () => {
               onChange={handleChange}
               placeholder="Skills (comma-separated)"
             />
-            <input
-              type="text"
-              name="availability"
-              value={formData.availability}
-              onChange={handleChange}
-              placeholder="Availability"
-            />
+
+            {/* Updated AvailabilityForm with onChange handler */}
+            <AvailabilityForm existingAvailability={profile.availability} />
           </div>
 
           {/* Resume Upload */}

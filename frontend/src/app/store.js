@@ -9,6 +9,7 @@ import registrationReducer from "../features/registration/registrationSlice";
 import passwordResetReducer from "../features/forgotPassword/forgotPasswordSlice";
 import profileReducer from "../features/profile/profileSlice";
 import resetStateMiddleware from "../utils/resetStateMiddleware";
+import availabilityReducer from "../features/availability/availabilitySlice";
 
 // Step 1: Create the Persist Configuration
 const persistConfig = {
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   passwordReset: passwordResetReducer,
   profile: profileReducer,
+  availability: availabilityReducer,
   // Add other reducers here as needed
 });
 
