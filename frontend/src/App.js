@@ -14,7 +14,6 @@ import About from "./components/Index/About";
 import ViewOwnProfile from "./components/Profile/ViewOwnProfile";
 import ViewPublicProfile from "./components/Profile/ViewPublicProfile";
 import EditProfile from "./components/Profile/EditProfile";
-import PhotoUpload from "./components/Profile/PhotoUpload";
 
 function App() {
   return (
@@ -54,10 +53,6 @@ function App() {
             <Route
               path="/profile/edit"
               element={<ProtectedRoute element={<EditProfile />} />}
-            />
-            <Route
-              path="/profile/photo-upload"
-              element={<ProtectedRoute element={<PhotoUpload />} />}
             />
             {/* catch all route */}
             <Route path="*" element={<h1>Not Found</h1>} />

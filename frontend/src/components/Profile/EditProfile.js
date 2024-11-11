@@ -10,18 +10,23 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Profile.css";
 import AvailabilityForm from "./AvailabilityForm";
 import { setAvailability } from "../../features/availability/availabilitySlice";
+import ProfilePictureUpload from "./ProfilePictureUpload";
+import SocialMediaLinks from "./SocialMediaLinks";
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Destructure profile state from Redux store
   const { profile, loading, error, uploadLoading } = useSelector(
     (state) => state.profile
   );
 
-  // state for files
+  // State for handling selected files
   const [selectedProfilePic, setSelectedProfilePic] = useState(null);
   const [selectedResume, setSelectedResume] = useState(null);
 
+  // Form state initialization, including nested objects
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -37,16 +42,20 @@ const EditProfile = () => {
     skills: "",
   });
 
+  // State for availability data, updated when AvailabilityForm changes
   const [availabilityData, setAvailabilityData] = useState([]);
 
+  // Handler for availability form changes
   const handleAvailabilityChange = (newAvailability) => {
     setAvailabilityData(newAvailability);
   };
 
+  // Fetch the profile data on component mount
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
 
+  // Populate form data when profile is loaded
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -66,11 +75,13 @@ const EditProfile = () => {
     }
   }, [profile]);
 
+  // Handle input change for main form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle change for social media link inputs specifically
   const handleSocialMediaChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -79,21 +90,7 @@ const EditProfile = () => {
     });
   };
 
-  const handleProfilePicSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        alert("Please select an image file");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
-        return;
-      }
-      setSelectedProfilePic(file);
-    }
-  };
-
+  // Validate and set resume file selection
   const handleResumeSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -109,10 +106,11 @@ const EditProfile = () => {
     }
   };
 
+  // Submit handler to dispatch actions for uploading files and updating profile
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Handle file uploads first
+      // Handle file uploads before profile data to ensure consistency
       if (selectedProfilePic) {
         const picFormData = new FormData();
         picFormData.append("profile_picture", selectedProfilePic);
@@ -125,7 +123,7 @@ const EditProfile = () => {
         await dispatch(uploadResume(resumeFormData)).unwrap();
       }
 
-      // Update profile
+      // Update profile with current form data, parsing skills into an array
       const updatedFormData = {
         ...formData,
         social_media_links: { ...formData.social_media_links },
@@ -133,11 +131,12 @@ const EditProfile = () => {
       };
       await dispatch(editProfile(updatedFormData)).unwrap();
 
-      // Set availability if there are valid slots
+      // Update availability if there are slots selected
       if (availabilityData.length > 0) {
         await dispatch(setAvailability(availabilityData)).unwrap();
       }
 
+      // Refresh profile data and navigate to the profile page
       await dispatch(fetchProfile());
       navigate("/profile");
     } catch (error) {
@@ -146,6 +145,7 @@ const EditProfile = () => {
     }
   };
 
+  // Display loading or error messages
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -158,33 +158,11 @@ const EditProfile = () => {
   return (
     <form onSubmit={handleSubmit}>
       {/* Profile picture section */}
-      <div className="upload-section">
-        <h3>Profile Picture</h3>
-        {profile?.profile_picture && (
-          <img
-            src={`${process.env.REACT_APP_SERVER_URL}${profile.profile_picture}`}
-            alt="Current profile"
-            className="current-profile-pic"
-          />
-        )}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleProfilePicSelect}
-          id="profile-pic-upload"
-          className="file-input"
-        />
-        <label htmlFor="profile-pic-upload" className="file-input-label">
-          {profile?.profile_picture
-            ? "Change Profile Picture"
-            : "Upload Profile Picture"}{" "}
-        </label>
-        {selectedProfilePic && (
-          <span className="selected-file">
-            Selected: {selectedProfilePic.name}
-          </span>
-        )}
-      </div>
+      <ProfilePictureUpload
+        currentProfilePic={`${process.env.REACT_APP_SERVER_URL}${profile?.profile_picture}`}
+        onUpload={(file) => setSelectedProfilePic(file)}
+        existingPicture={profile?.profile_picture}
+      />
 
       {/* Basic Info */}
       <input
@@ -223,37 +201,10 @@ const EditProfile = () => {
       />
 
       {/* Social Media Links */}
-      <div>
-        <h3>Social Media Links</h3>
-        <input
-          type="text"
-          name="linkedin"
-          value={formData.social_media_links.linkedin}
-          onChange={handleSocialMediaChange}
-          placeholder="LinkedIn URL"
-        />
-        <input
-          type="text"
-          name="twitter"
-          value={formData.social_media_links.twitter}
-          onChange={handleSocialMediaChange}
-          placeholder="Twitter URL"
-        />
-        <input
-          type="text"
-          name="facebook"
-          value={formData.social_media_links.facebook}
-          onChange={handleSocialMediaChange}
-          placeholder="Facebook URL"
-        />
-        <input
-          type="text"
-          name="instagram"
-          value={formData.social_media_links.instagram}
-          onChange={handleSocialMediaChange}
-          placeholder="Instagram URL"
-        />
-      </div>
+      <SocialMediaLinks
+        links={formData.social_media_links}
+        onChange={handleSocialMediaChange}
+      />
 
       {/* College Student Section */}
       {profile?.role === "college_student" && (
@@ -306,7 +257,9 @@ const EditProfile = () => {
           </div>
         </>
       )}
-      <button type="submit">Save</button>
+      <button type="submit" disabled={uploadLoading}>
+        {uploadLoading ? "Uploading..." : "Save Changes"}
+      </button>
     </form>
   );
 };
