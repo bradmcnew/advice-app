@@ -6,11 +6,6 @@ const setAvailability = async (req, res, next) => {
     const userId = req.user.id;
     const { availability } = req.body;
 
-    console.log("1. Received request:", {
-      userId,
-      availability,
-    });
-
     if (!availability || !Array.isArray(availability)) {
       return res.status(400).json({
         message:
@@ -22,65 +17,44 @@ const setAvailability = async (req, res, next) => {
     // Find the user's profile
     const userProfile = await UserProfile.findOne({
       where: { user_id: userId },
-      attributes: ["id"], // Only fetch the id
     });
-
-    console.log("2. Found user profile:", userProfile?.toJSON());
 
     if (!userProfile) {
-      return res.status(404).json({
-        message: "User profile not found",
-        userId,
-      });
+      await transaction.rollback();
+      return res.status(404).json({ message: "User profile not found" });
     }
 
-    // Delete existing availability entries for this user
+    // Delete existing availability
     await UserAvailability.destroy({
       where: { user_profile_id: userProfile.id },
+      transaction,
     });
 
-    console.log(
-      "3. Preparing availability records for user profile:",
-      userProfile.id
-    );
-
-    // Create new availability records
-    const availabilityRecords = availability.map((slot) => ({
+    // Create new availability entries
+    const availabilityEntries = availability.map((slot) => ({
       user_profile_id: userProfile.id,
-      day_of_week: slot.day_of_week.toLowerCase(), // Ensure lowercase
+      day_of_week: slot.day_of_week,
       start_time: slot.start_time,
       end_time: slot.end_time,
     }));
 
-    console.log("4. Created availability records:", availabilityRecords);
-
-    // Create all records
-    const createdAvailabilities = await UserAvailability.bulkCreate(
-      availabilityRecords,
-      {
-        validate: true,
-        returning: true,
-        transaction,
-      }
-    );
+    await UserAvailability.bulkCreate(availabilityEntries, { transaction });
 
     await transaction.commit();
 
-    console.log("5. Successfully created availability records");
+    // Fetch and return the updated availability
+    const updatedAvailability = await UserAvailability.findAll({
+      where: { user_profile_id: userProfile.id },
+    });
 
-    return res.status(201).json({
-      message: "Availability created successfully.",
-      data: createdAvailabilities,
+    return res.status(200).json({
+      message: "Availability set successfully",
+      data: updatedAvailability,
     });
-  } catch (err) {
-    console.error("Error in setAvailability:", {
-      message: err.message,
-      stack: err.stack,
-    });
-    return res.status(500).json({
-      message: "Failed to set availability",
-      error: err.message,
-    });
+  } catch (error) {
+    await transaction.rollback();
+    console.error("Error setting availability:", error);
+    return res.status(500).json({ message: "Failed to set availability" });
   }
 };
 

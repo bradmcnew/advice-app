@@ -20,7 +20,10 @@ const viewPublicProfile = async (req, res) => {
         },
         {
           model: UserAvailability,
-          attributes: ["day_of_week", "start_time", "end_time"],
+          as: "availability",
+          attributes: ["id", "day_of_week", "start_time", "end_time"],
+          raw: false,
+          nest: true,
         },
       ],
       attributes: [
@@ -43,12 +46,6 @@ const viewPublicProfile = async (req, res) => {
       ...profile.toJSON(),
       role: profile.User?.role,
       skills: profile.Skills?.map((skill) => skill.name) || [],
-      availability:
-        profile.UserAvailabilities?.map((slot) => ({
-          day_of_week: slot.day_of_week,
-          start_time: slot.start_time,
-          end_time: slot.end_time,
-        })) || [],
       social_media_links: profile.social_media_links || {},
     };
 

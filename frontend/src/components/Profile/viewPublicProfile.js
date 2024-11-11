@@ -41,6 +41,7 @@ const ViewPublicProfile = () => {
   const { publicProfile, loading, error } = useSelector(
     (state) => state.profile
   );
+  const { availability } = useSelector((state) => state.availability);
 
   // Fetch profile data when component mounts or when ID changes
   useEffect(() => {
@@ -49,6 +50,19 @@ const ViewPublicProfile = () => {
   }, [dispatch, id]); // Dependencies ensure effect runs only when necessary
 
   console.log("publicProfile", publicProfile); // Debug log for profile data
+
+  const groupAvailabilityByDay = (availability) => {
+    return availability.reduce((acc, slot) => {
+      if (!acc[slot.day_of_week]) {
+        acc[slot.day_of_week] = [];
+      }
+      acc[slot.day_of_week].push({
+        start: slot.start_time,
+        end: slot.end_time,
+      });
+      return acc;
+    }, {});
+  };
 
   // Show loading state while fetching data
   if (loading) {
@@ -103,21 +117,26 @@ const ViewPublicProfile = () => {
         )}
 
       {/* Availability Section */}
-      {publicProfile.profile.availability?.length > 0 && (
+      {availability.length > 0 && (
         <div className="profile-section">
           <h3>Availability</h3>
           <div className="availability-list">
-            {publicProfile.profile.availability.map((slot, index) => (
-              <div key={index} className="availability-slot">
-                <span className="day">
-                  {slot.day_of_week.charAt(0).toUpperCase() +
-                    slot.day_of_week.slice(1)}
-                </span>
-                <span className="time">
-                  {formatTime(slot.start)} - {formatTime(slot.end)}
-                </span>
-              </div>
-            ))}
+            {Object.entries(groupAvailabilityByDay(availability)).map(
+              ([day, sessions]) => (
+                <div key={day} className="availability-day">
+                  <span className="day">
+                    {day.charAt(0).toUpperCase() + day.slice(1)}
+                  </span>
+                  <div className="sessions">
+                    {sessions.map((session, index) => (
+                      <span key={index} className="session-time">
+                        {formatTime(session.start)} - {formatTime(session.end)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )
+            )}
           </div>
         </div>
       )}

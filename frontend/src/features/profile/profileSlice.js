@@ -8,6 +8,7 @@ export const fetchProfile = createAsyncThunk(
     try {
       console.log("fetchProfile");
       const response = await axiosInstance.get(`/profile`);
+      console.log("Profile response:", response.data);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -104,6 +105,7 @@ const profileSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
+        console.log("Profile action payload:", action.payload);
         state.loading = false;
         state.profile = action.payload;
       })

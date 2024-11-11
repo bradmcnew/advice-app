@@ -1,4 +1,4 @@
-const { Model, DataTypes } = require("sequelize");
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   const UserProfile = sequelize.define(
@@ -47,10 +47,6 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       resume: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      availability: {
         type: DataTypes.STRING,
         allowNull: true,
       },

@@ -17,7 +17,6 @@ const EditProfile = () => {
   const { profile, loading, error, uploadLoading } = useSelector(
     (state) => state.profile
   );
-  const { availability } = useSelector((state) => state.availability);
 
   // state for files
   const [selectedProfilePic, setSelectedProfilePic] = useState(null);
@@ -38,6 +37,12 @@ const EditProfile = () => {
     skills: "",
   });
 
+  const [availabilityData, setAvailabilityData] = useState([]);
+
+  const handleAvailabilityChange = (newAvailability) => {
+    setAvailabilityData(newAvailability);
+  };
+
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
@@ -57,7 +62,6 @@ const EditProfile = () => {
           instagram: "",
         },
         skills: profile.skills ? profile.skills.join(", ") : "",
-        availability: profile.availability || "",
       });
     }
   }, [profile]);
@@ -121,11 +125,6 @@ const EditProfile = () => {
         await dispatch(uploadResume(resumeFormData)).unwrap();
       }
 
-      // Filter out empty availability slots
-      const validAvailability = availability.filter(
-        (slot) => slot.start_time && slot.end_time
-      );
-
       // Update profile
       const updatedFormData = {
         ...formData,
@@ -135,8 +134,8 @@ const EditProfile = () => {
       await dispatch(editProfile(updatedFormData)).unwrap();
 
       // Set availability if there are valid slots
-      if (validAvailability.length > 0) {
-        await dispatch(setAvailability(validAvailability)).unwrap();
+      if (availabilityData.length > 0) {
+        await dispatch(setAvailability(availabilityData)).unwrap();
       }
 
       await dispatch(fetchProfile());
@@ -270,7 +269,10 @@ const EditProfile = () => {
             />
 
             {/* Updated AvailabilityForm with onChange handler */}
-            <AvailabilityForm existingAvailability={profile.availability} />
+            <AvailabilityForm
+              existingAvailability={profile.availability}
+              onChange={handleAvailabilityChange}
+            />
           </div>
 
           {/* Resume Upload */}

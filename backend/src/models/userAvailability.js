@@ -6,17 +6,17 @@ module.exports = (sequelize) => {
     {
       id: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4, // Automatically generate UUID
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
       user_profile_id: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-          model: "user_profiles", // Ensure the model name is correct (case-sensitive)
+          model: "user_profiles",
           key: "id",
         },
-        onDelete: "CASCADE", // Ensures deletion of availability records when user profile is deleted
+        onDelete: "CASCADE",
       },
       day_of_week: {
         type: DataTypes.ENUM(
@@ -45,6 +45,11 @@ module.exports = (sequelize) => {
       underscored: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
+      indexes: [
+        {
+          fields: ["user_profile_id", "day_of_week"],
+        },
+      ],
     }
   );
 

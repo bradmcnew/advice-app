@@ -1,13 +1,18 @@
-const { UserProfile, Skill, UserSkill } = require("../../models");
+const { UserProfile, Skill, UserSkill } = require("../../models/index");
 
-const manageSkills = async (req, res, nect) => {
+const manageSkills = async (req, res, next) => {
   try {
     const { skills } = req.body;
 
-    if (!Array.isArray(skills) || skills.length === 0) {
+    // Normalize skills
+    const cleanedSkills = skills
+      .map((skill) => skill.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (cleanedSkills.length === 0) {
       return res
         .status(400)
-        .json({ message: "Please provide an array of skills" });
+        .json({ message: "Please provide valid skill names." });
     }
 
     // Get authenticated user's profile

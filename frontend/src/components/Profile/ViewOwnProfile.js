@@ -3,11 +3,32 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../../features/profile/profileSlice";
 import "../../styles/Profile.css";
 
+const formatTime = (timeString) => {
+  if (!timeString) return "";
+  try {
+    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } catch (error) {
+    console.error("Error formatting time:", error);
+    return timeString;
+  }
+};
+
 const ViewOwnProfile = () => {
   const dispatch = useDispatch();
-  const { profile, loading, error } = useSelector((state) => state.profile);
+  const { profile, loading, error } = useSelector((state) => {
+    console.log("Full Redux state:", state);
+    return state.profile;
+  });
+  const { availability } = useSelector((state) => state.availability);
+
+  console.log("Current profile:", profile);
 
   useEffect(() => {
+    console.log("Dispatching fetchProfile");
     dispatch(fetchProfile());
   }, [dispatch]);
 
@@ -24,6 +45,20 @@ const ViewOwnProfile = () => {
   }
 
   console.log("prof pic: ", profile.profile_picture);
+
+  const groupAvailabilityByDay = (availability) => {
+    if (!Array.isArray(availability)) return {};
+    return availability.reduce((acc, slot) => {
+      if (!acc[slot.day_of_week]) {
+        acc[slot.day_of_week] = [];
+      }
+      acc[slot.day_of_week].push({
+        start: slot.start_time,
+        end: slot.end_time,
+      });
+      return acc;
+    }, {});
+  };
 
   return (
     <div className="profile">
@@ -99,9 +134,33 @@ const ViewOwnProfile = () => {
             )}
           </div>
 
-          <p className="availability">
-            Availability: {profile?.availability || "N/A"}
-          </p>
+          {/* Availability Section */}
+          <div className="availability-section">
+            <h3>Availability</h3>
+            {availability.length > 0 ? (
+              <div className="availability-list">
+                {Object.entries(groupAvailabilityByDay(availability)).map(
+                  ([day, sessions]) => (
+                    <div key={day} className="availability-day">
+                      <span className="day">
+                        {day.charAt(0).toUpperCase() + day.slice(1)}
+                      </span>
+                      <div className="sessions">
+                        {sessions.map((session, index) => (
+                          <span key={index} className="session-time">
+                            {formatTime(session.start)} -{" "}
+                            {formatTime(session.end)}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            ) : (
+              <p>No availability set</p>
+            )}
+          </div>
         </div>
       )}
     </div>

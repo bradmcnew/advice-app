@@ -498,3 +498,43 @@ textarea {
 .skill-tag {
   border-left: 3px solid #4a90e2;
 }
+
+.availability-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.availability-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.availability-day {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.day {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.session-time {
+  background: #e9ecef;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
