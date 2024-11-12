@@ -12,6 +12,8 @@ import AvailabilityForm from "./AvailabilityForm";
 import { setAvailability } from "../../features/availability/availabilitySlice";
 import ProfilePictureUpload from "./ProfilePictureUpload";
 import SocialMediaLinks from "./SocialMediaLinks";
+import axiosInstance from "../../axios/axiosConfig";
+import Select from "react-select";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -23,11 +25,11 @@ const EditProfile = () => {
   );
   const { availability } = useSelector((state) => state.availability);
 
-  // State for handling selected files
+  // State for handling selected files (profile picture and resume)
   const [selectedProfilePic, setSelectedProfilePic] = useState(null);
   const [selectedResume, setSelectedResume] = useState(null);
 
-  // Form state initialization, including nested objects
+  // Initial form data state with nested social media links
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -40,23 +42,39 @@ const EditProfile = () => {
       facebook: "",
       instagram: "",
     },
-    skills: "",
+    skills: [], // Array for selected skills
   });
 
   // State for availability data, updated when AvailabilityForm changes
   const [availabilityData, setAvailabilityData] = useState([]);
 
-  // Handler for availability form changes
+  // Handler to update availability data when AvailabilityForm changes
   const handleAvailabilityChange = (newAvailability) => {
     setAvailabilityData(newAvailability);
   };
 
-  // Fetch the profile data on component mount
+  // State for handling skills selection
+  const [skillsOptions, setSkillsOptions] = useState([]);
+
+  // Fetch available skills for the user to select
+  useEffect(() => {
+    const fetchSkills = async () => {
+      const response = await axiosInstance.get("/profile/skills");
+      const formattedSkills = response.data.skillNames.map((skill) => ({
+        value: skill,
+        label: skill,
+      }));
+      setSkillsOptions(formattedSkills);
+    };
+    fetchSkills();
+  }, []);
+
+  // Fetch profile data on component mount (e.g., when editing profile)
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
 
-  // Populate form data when profile is loaded
+  // Populate form data with existing profile data when it's loaded
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -71,18 +89,28 @@ const EditProfile = () => {
           facebook: "",
           instagram: "",
         },
-        skills: profile.skills ? profile.skills.join(", ") : "",
+        skills: Array.isArray(profile.skills)
+          ? profile.skills.map((skill) => ({
+              value: typeof skill === "object" ? skill.name : skill,
+              label: typeof skill === "object" ? skill.name : skill,
+            }))
+          : [],
       });
     }
   }, [profile]);
 
-  // Handle input change for main form fields
+  // Handle input changes for the main form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle change for social media link inputs specifically
+  // Handle skills selection change in the 'Select' component
+  const handleSkillsChange = (selectedSkills) => {
+    setFormData({ ...formData, skills: selectedSkills });
+  };
+
+  // Handle changes in social media links (individual inputs)
   const handleSocialMediaChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -91,7 +119,7 @@ const EditProfile = () => {
     });
   };
 
-  // Validate and set resume file selection
+  // Validate and handle resume file selection (only PDF and under 5MB)
   const handleResumeSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -107,11 +135,11 @@ const EditProfile = () => {
     }
   };
 
-  // Submit handler to dispatch actions for uploading files and updating profile
+  // Handle form submission, including file uploads and profile updates
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Handle file uploads before profile data to ensure consistency
+      // Handle file uploads first (profile picture, resume) to ensure consistency
       if (selectedProfilePic) {
         const picFormData = new FormData();
         picFormData.append("profile_picture", selectedProfilePic);
@@ -124,20 +152,20 @@ const EditProfile = () => {
         await dispatch(uploadResume(resumeFormData)).unwrap();
       }
 
-      // Update profile with current form data, parsing skills into an array
+      // Update profile with the form data, ensuring skills are in the correct format
       const updatedFormData = {
         ...formData,
         social_media_links: { ...formData.social_media_links },
-        skills: formData.skills.split(",").map((skill) => skill.trim()),
+        skills: formData.skills.map((skill) => skill.value),
       };
       await dispatch(editProfile(updatedFormData)).unwrap();
 
-      // Update availability if there are slots selected
+      // If availability slots are selected, update availability
       if (availabilityData.length > 0) {
         await dispatch(setAvailability(availabilityData)).unwrap();
       }
 
-      // Refresh profile data and navigate to the profile page
+      // Refresh profile data after successful update and navigate to the profile page
       await dispatch(fetchProfile());
       navigate("/profile");
     } catch (error) {
@@ -146,7 +174,7 @@ const EditProfile = () => {
     }
   };
 
-  // Display loading or error messages
+  // Display loading or error messages while waiting for data or handling errors
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -165,7 +193,7 @@ const EditProfile = () => {
         existingPicture={profile?.profile_picture}
       />
 
-      {/* Basic Info */}
+      {/* Basic Info section */}
       <input
         type="text"
         name="first_name"
@@ -207,20 +235,20 @@ const EditProfile = () => {
         onChange={handleSocialMediaChange}
       />
 
-      {/* College Student Section */}
+      {/* College Student Specific Info */}
       {profile?.role === "college_student" && (
         <>
           <div className="form-section">
             <h3>College Student Information</h3>
-            <input
-              type="text"
-              name="skills"
+            <Select
+              isMulti
               value={formData.skills}
-              onChange={handleChange}
-              placeholder="Skills (comma-separated)"
+              options={skillsOptions}
+              onChange={handleSkillsChange}
+              placeholder="Select Skills"
             />
 
-            {/* Updated AvailabilityForm with onChange handler */}
+            {/* Availability Form */}
             <AvailabilityForm
               existingAvailability={availability}
               onChange={handleAvailabilityChange}

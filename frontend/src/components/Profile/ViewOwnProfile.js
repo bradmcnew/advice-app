@@ -124,9 +124,10 @@ const ViewOwnProfile = () => {
             <h3>Skills:</h3>
             {Array.isArray(profile?.skills) && profile.skills.length > 0 ? (
               <ul>
-                {console.log("skills", profile.skills)}
                 {profile.skills.map((skill, index) => (
-                  <li key={index}>{skill}</li>
+                  <li key={index}>
+                    {typeof skill === "object" ? skill.name : skill}
+                  </li>
                 ))}
               </ul>
             ) : (
