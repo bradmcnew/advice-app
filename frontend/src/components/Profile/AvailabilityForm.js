@@ -28,6 +28,8 @@ const DEFAULT_SLOTS = DAYS_OF_WEEK.map((day) => ({
 
 /**
  * AvailabilityForm component
+ * Handles user availability slots for each day of the week.
+ * Allows adding/removing session times for each day.
  * @param {Object} props - Component props
  * @param {Array} props.existingAvailability - Existing availability data
  * @param {Function} props.onChange - Callback when availability changes
@@ -70,23 +72,29 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
 
   /**
    * Handle time input changes
+   * Updates the availability slots state when a user modifies session times.
    * @param {number} dayIndex - Index of the day being modified
    * @param {number} sessionIndex - Index of the session being modified
    * @param {string} field - Field being modified (start_time or end_time)
    * @param {string} value - New time value
    */
   const handleTimeChange = (dayIndex, sessionIndex, field, value) => {
-    // Just update local state
+    // Update local state with new time value
     const updatedSlots = [...availabilitySlots];
     updatedSlots[dayIndex].sessions[sessionIndex][field] = value + ":00";
     setAvailabilitySlots(updatedSlots);
 
-    // Notify parent component of changes
+    // Notify parent component of changes by flattening slots
     const flattenedSlots = getFlattenedSlots(updatedSlots);
     onChange(flattenedSlots);
   };
 
-  // Helper function to get flattened slots
+  /**
+   * Helper function to flatten the availability slots structure
+   * This is necessary for passing availability data to the parent component.
+   * @param {Object[]} slots - The availability slots to flatten
+   * @returns {Object[]} Flattened array of sessions with day_of_week, start_time, and end_time
+   */
   const getFlattenedSlots = (slots) => {
     return slots.flatMap((daySlot) =>
       daySlot.sessions
@@ -99,6 +107,10 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
     );
   };
 
+  /**
+   * Add a new session for a specific day
+   * @param {number} dayIndex - The index of the day to add the session to
+   */
   const addSession = (dayIndex) => {
     const updatedSlots = [...availabilitySlots];
     updatedSlots[dayIndex].sessions.push({ start_time: "", end_time: "" });
@@ -106,6 +118,12 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
     onChange(getFlattenedSlots(updatedSlots));
   };
 
+  /**
+   * Remove a session from a specific day
+   * If the last session is removed, a default session is added back.
+   * @param {number} dayIndex - The index of the day to remove the session from
+   * @param {number} sessionIndex - The index of the session to remove
+   */
   const removeSession = (dayIndex, sessionIndex) => {
     const updatedSlots = [...availabilitySlots];
     updatedSlots[dayIndex].sessions.splice(sessionIndex, 1);

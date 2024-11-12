@@ -17,10 +17,11 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Destructure profile state from Redux store
+  // Destructure profile state and availability state from Redux store
   const { profile, loading, error, uploadLoading } = useSelector(
     (state) => state.profile
   );
+  const { availability } = useSelector((state) => state.availability);
 
   // State for handling selected files
   const [selectedProfilePic, setSelectedProfilePic] = useState(null);
@@ -221,7 +222,7 @@ const EditProfile = () => {
 
             {/* Updated AvailabilityForm with onChange handler */}
             <AvailabilityForm
-              existingAvailability={profile.availability}
+              existingAvailability={availability}
               onChange={handleAvailabilityChange}
             />
           </div>
