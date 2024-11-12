@@ -1,0 +1,48 @@
+version = 1
+
+# Patterns for test files
+test_patterns = [
+  "backend/__tests__/**",       # Backend test files in __tests__ directory
+  "frontend/tests/**",          # Frontend test files (if applicable)
+  "frontend/test_*.js",         # Specific frontend test file naming pattern
+  "backend/test_*.js",          # Specific backend test file naming pattern
+  "frontend/**/*.test.js",      # Frontend test files with .test.js suffix
+  "backend/**/*.test.js",       # Backend test files with .test.js suffix
+]
+
+# Exclude specific patterns from analysis
+exclude_patterns = [
+  "frontend/node_modules/**",  # Exclude frontend node_modules
+  "backend/node_modules/**",   # Exclude backend node_modules
+  "frontend/dist/**",          # Exclude frontend build files
+  "backend/dist/**",           # Exclude backend build files
+  "frontend/.cache/**",        # Exclude frontend cache files
+  "backend/.cache/**",         # Exclude backend cache files
+  "frontend/.next/**",         # Exclude Next.js build files (if using Next.js)
+  "backend/.env*",             # Exclude backend environment files
+  "frontend/.env*",            # Exclude frontend environment files
+  "frontend/.vscode/**",       # Exclude VSCode workspace files in frontend
+  "backend/.vscode/**",        # Exclude VSCode workspace files in backend
+  "frontend/logs/**",          # Exclude frontend log files
+  "backend/logs/**",           # Exclude backend log files
+  "frontend/tests/**",         # Exclude frontend test files (if needed)
+  "backend/tests/**",          # Exclude backend test files (if needed)
+  "frontend/public/**",        # Exclude static public folder (if unnecessary)
+  "backend/public/**",         # Exclude static public folder (if unnecessary)
+  "*.log",                     # Exclude all log files
+  "*.bak",                     # Exclude backup files
+  "*.tmp"                      # Exclude temporary files
+]
+
+[[analyzers]]
+name = "javascript"  # You can change this to 'javascript' or another language, based on your project.
+enabled = true
+
+  [analyzers.meta]
+  plugins = ["react"]  # Enable the React plugin for better React code analysis
+  environment = [
+    "nodejs",
+    "browser",
+    "jest"
+  ]  # Define your environment (Node.js, Browser, Jest)
+  module_system = "es-modules"  # Indicate you're using ES Modules in your JS code
