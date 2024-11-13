@@ -49,6 +49,7 @@ const {
   publicProfileViewValidationRules,
 } = require("../../controllers/profile/publicProfileValidator");
 const validateRequest = require("../../middleware/validators/validateRequest");
+const { getAllSkills } = require("../../controllers/profile/getAllSkills");
 
 const router = express.Router();
 
@@ -130,6 +131,13 @@ router.post(
  * Skills Management Routes
  * @group College Student Features
  */
+
+/**
+ * @route GET /api/profile/skills
+ * @description Get all available skills
+ * @access Public
+ */
+router.get("/skills", getAllSkills);
 
 /**
  * @route PUT /api/profile/skills

@@ -5,8 +5,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setAvailability } from "../../features/availability/availabilitySlice";
-import { fetchProfile } from "../../features/profile/profileSlice";
 import "../../styles/Availability.css";
 
 /** @constant {string[]} Days of the week for availability slots */
@@ -36,7 +34,6 @@ const DEFAULT_SLOTS = DAYS_OF_WEEK.map((day) => ({
  * @returns {JSX.Element} Rendered component
  */
 const AvailabilityForm = ({ existingAvailability, onChange }) => {
-  const dispatch = useDispatch();
   const [availabilitySlots, setAvailabilitySlots] = useState(DEFAULT_SLOTS);
 
   // Initialize form with existing availability data
@@ -70,6 +67,27 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
     }
   }, [existingAvailability]);
 
+  // Add this helper function to split time into 30-minute intervals
+  const splitIntoThirtyMinIntervals = (startTime, endTime) => {
+    const intervals = [];
+    const start = new Date(`2000-01-01T${startTime}`);
+    const end = new Date(`2000-01-01T${endTime}`);
+
+    let currentTime = start;
+    while (currentTime < end) {
+      const intervalStart = currentTime.toTimeString().slice(0, 8); // HH:MM:SS
+      currentTime = new Date(currentTime.getTime() + 30 * 60000); // Add 30 minutes
+      const intervalEnd = currentTime.toTimeString().slice(0, 8);
+
+      intervals.push({
+        start_time: intervalStart,
+        end_time: intervalEnd,
+      });
+    }
+
+    return intervals;
+  };
+
   /**
    * Handle time input changes
    * Updates the availability slots state when a user modifies session times.
@@ -79,14 +97,34 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
    * @param {string} value - New time value
    */
   const handleTimeChange = (dayIndex, sessionIndex, field, value) => {
-    // Update local state with new time value
     const updatedSlots = [...availabilitySlots];
     updatedSlots[dayIndex].sessions[sessionIndex][field] = value + ":00";
     setAvailabilitySlots(updatedSlots);
 
-    // Notify parent component of changes by flattening slots
-    const flattenedSlots = getFlattenedSlots(updatedSlots);
-    onChange(flattenedSlots);
+    // Only process and notify parent when both start and end times are set
+    const currentSession = updatedSlots[dayIndex].sessions[sessionIndex];
+    if (currentSession.start_time && currentSession.end_time) {
+      // Create flattened slots with 30-minute intervals for the backend
+      const flattenedSlots = getFlattenedSlotsWithIntervals(updatedSlots);
+      onChange(flattenedSlots);
+    }
+  };
+
+  // New helper function to create 30-minute intervals for backend
+  const getFlattenedSlotsWithIntervals = (slots) => {
+    return slots.flatMap((daySlot) =>
+      daySlot.sessions
+        .filter((session) => session.start_time && session.end_time)
+        .flatMap((session) => {
+          return splitIntoThirtyMinIntervals(
+            session.start_time,
+            session.end_time
+          ).map((interval) => ({
+            day_of_week: daySlot.day_of_week,
+            ...interval,
+          }));
+        })
+    );
   };
 
   /**
@@ -113,9 +151,11 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
    */
   const addSession = (dayIndex) => {
     const updatedSlots = [...availabilitySlots];
-    updatedSlots[dayIndex].sessions.push({ start_time: "", end_time: "" });
+    updatedSlots[dayIndex].sessions.push({
+      start_time: "",
+      end_time: "",
+    });
     setAvailabilitySlots(updatedSlots);
-    onChange(getFlattenedSlots(updatedSlots));
   };
 
   /**
@@ -134,6 +174,19 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
     onChange(getFlattenedSlots(updatedSlots));
   };
 
+  // Add these time options at the top of your file
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let hour = 0; hour < 24; hour++) {
+      const hourStr = hour.toString().padStart(2, "0");
+      options.push(`${hourStr}:00`);
+      options.push(`${hourStr}:30`);
+    }
+    return options;
+  };
+
+  const TIME_OPTIONS = generateTimeOptions();
+
   return (
     <div className="availability-form">
       <h3>Set Your Weekly Availability</h3>
@@ -148,8 +201,7 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
               {daySlot.sessions.map((session, sessionIndex) => (
                 <div key={sessionIndex} className="time-slot">
                   <div className="time-inputs">
-                    <input
-                      type="time"
+                    <select
                       value={session.start_time?.slice(0, 5) || ""}
                       onChange={(e) =>
                         handleTimeChange(
@@ -159,11 +211,17 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
                           e.target.value
                         )
                       }
-                      className="time-input"
-                    />
+                      className="time-select"
+                    >
+                      <option value="">Select Start Time</option>
+                      {TIME_OPTIONS.map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
                     <span>to</span>
-                    <input
-                      type="time"
+                    <select
                       value={session.end_time?.slice(0, 5) || ""}
                       onChange={(e) =>
                         handleTimeChange(
@@ -173,8 +231,17 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
                           e.target.value
                         )
                       }
-                      className="time-input"
-                    />
+                      className="time-select"
+                    >
+                      <option value="">Select End Time</option>
+                      {TIME_OPTIONS.filter(
+                        (time) => time > (session.start_time?.slice(0, 5) || "")
+                      ).map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </select>
                     {daySlot.sessions.length > 1 && (
                       <button
                         type="button"
