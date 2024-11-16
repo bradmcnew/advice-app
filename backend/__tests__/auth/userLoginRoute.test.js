@@ -1,7 +1,7 @@
 // __tests__/auth/loginUser.test.js
 const request = require("supertest");
 const app = require("../../src/app"); // Import the Express app for testing
-const { sequelize, User } = require("../../src/models"); // Import Sequelize models
+const { sequelize, User } = require("../../src/models/index.js"); // Import Sequelize models
 const bcrypt = require("bcrypt");
 const loginUserController = require("../../src/controllers/auth/loginUserController");
 

@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import "../../styles/Availability.css";
+import { mergeTimeSlots } from "../../utils/timeUtils";
 
 /** @constant {string[]} Days of the week for availability slots */
 const DAYS_OF_WEEK = [
@@ -38,6 +39,7 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
 
   // Initialize form with existing availability data
   useEffect(() => {
+    console.log("Existing availability in form:", existingAvailability);
     if (
       Array.isArray(existingAvailability) &&
       existingAvailability.length > 0

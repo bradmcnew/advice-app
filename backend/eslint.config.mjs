@@ -4,7 +4,7 @@ import pluginJest from "eslint-plugin-jest";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { files: ["**/*.js"], languageOptions: { sourceType: "commonjs" } },
+  { files: ["**/*.js"], languageOptions: { sourceType: "module" } },
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
 ];

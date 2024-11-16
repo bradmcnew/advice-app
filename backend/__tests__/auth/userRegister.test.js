@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../../src/app"); // Adjust the path as needed
-const { sequelize, User } = require("../../src/models"); // Adjust the path as needed
+const { sequelize, User } = require("../../src/models/index.js"); // Adjust the path as needed
 
 describe("api/users", () => {
   beforeEach(async () => {

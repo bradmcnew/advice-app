@@ -1,7 +1,7 @@
 // tests/auth.test.js
 const request = require("supertest");
 const app = require("../../src/app"); // Import your Express app
-const { User } = require("../../src/models"); // Adjust the path as needed
+const { User } = require("../../src/models/index.js"); // Adjust the path as needed
 const {
   saveResetToken,
 } = require("../../src/services/user/userForgotPasswordService");

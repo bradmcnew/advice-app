@@ -3,7 +3,7 @@ const request = require("supertest");
 const session = require("supertest-session");
 const bcrypt = require("bcrypt");
 const app = require("../../src/app");
-const { User, UserProfile, sequelize } = require("../../src/models");
+const { User, UserProfile, sequelize } = require("../../src/models/index.js");
 
 /**
  * @description Test suite for profile editing functionality

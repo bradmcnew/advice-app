@@ -3,7 +3,7 @@ process.env.NODE_ENV = "test"; // Set NODE_ENV to 'test' to indicate that the en
 process.env.DB_HOST = "localhost"; // Example DB config for tests, adjust as necessary for your testing setup
 
 // // Import Sequelize instance for database operations
-// const { sequelize } = require("./src/models/index");
+// const { sequelize } = require("./src/models/index.js");
 // const app = require("./src/app"); // Import your Express app
 
 // let server;
