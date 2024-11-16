@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import "../../styles/Availability.css";
-import { mergeTimeSlots } from "../../utils/timeUtils";
+import { mergeTimeSlots } from "../../utils/timeUtils.js";
 
 /** @constant {string[]} Days of the week for availability slots */
 const DAYS_OF_WEEK = [
