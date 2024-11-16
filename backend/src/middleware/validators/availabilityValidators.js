@@ -3,7 +3,7 @@ import { body, param } from "express-validator";
 // Helper function to check half-hour increments
 const isHalfHourIncrement = (time) => {
   const date = new Date(`1970-01-01T${time}Z`);
-  return date.getMinutes() % 30 === 0;
+  return date.getUTCMinutes() % 30 === 0;
 };
 
 // Validators for setting availability
@@ -43,10 +43,8 @@ const setAvailabilityValidator = () => [
           "End time must be in half-hour increments (e.g., 12:00, 12:30)."
         );
       }
-      // Extract the current index from the path
       const index = parseInt(path.match(/\[(\d+)\]/)[1]);
 
-      // Get the corresponding start time for this slot
       const startTime = new Date(
         `1970-01-01T${req.body.availability[index].start_time}Z`
       );

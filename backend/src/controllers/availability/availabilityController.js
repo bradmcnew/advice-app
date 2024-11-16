@@ -49,8 +49,8 @@ const setAvailability = async (req, res, next) => {
 
     for (const slot of sortedAvailability) {
       const slotKey = `${slot.day_of_week}-${slot.start_time}-${slot.end_time}`;
-      const timeStart = new Date(`1970-01-01T${slot.start_time}`);
-      const timeEnd = new Date(`1970-01-01T${slot.end_time}`);
+      const timeStart = new Date(`1970-01-01T${slot.start_time}Z`);
+      const timeEnd = new Date(`1970-01-01T${slot.end_time}Z`);
 
       // Check for exact duplicates
       if (validatedSlots.has(slotKey)) {
@@ -65,15 +65,13 @@ const setAvailability = async (req, res, next) => {
       validatedSlots.forEach((existingSlot) => {
         if (existingSlot.day_of_week === slot.day_of_week) {
           const existingStart = new Date(
-            `1970-01-01T${existingSlot.start_time}`
+            `1970-01-01T${existingSlot.start_time}Z`
           );
-          const existingEnd = new Date(`1970-01-01T${existingSlot.end_time}`);
+          const existingEnd = new Date(`1970-01-01T${existingSlot.end_time}Z`);
 
-          if (
-            (timeStart >= existingStart && timeStart < existingEnd) ||
-            (timeEnd > existingStart && timeEnd <= existingEnd) ||
-            (timeStart <= existingStart && timeEnd >= existingEnd)
-          ) {
+          // Two time slots overlap if one starts before the other ends
+          // and the other starts before the first one ends
+          if (timeStart < existingEnd && existingStart < timeEnd) {
             hasOverlap = true;
             overlappingErrors.push(
               `Time slot overlap on ${slot.day_of_week}: ${existingSlot.start_time}-${existingSlot.end_time} and ${slot.start_time}-${slot.end_time}`

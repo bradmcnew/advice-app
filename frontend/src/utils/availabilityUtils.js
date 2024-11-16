@@ -1,15 +1,21 @@
 export const formatTime = (timeString) => {
   if (!timeString) return "";
   try {
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
+    const time = new Date(`1970-01-01T${timeString}Z`);
+    return time.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
+      timeZone: "UTC",
     });
   } catch (error) {
     console.error("Error formatting time:", error);
     return timeString;
   }
+};
+
+export const formatTimeForServer = (timeString) => {
+  return `${timeString}:00`;
 };
 
 export const groupAvailabilityByDay = (availability) => {

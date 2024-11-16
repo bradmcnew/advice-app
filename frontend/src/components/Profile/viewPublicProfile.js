@@ -59,11 +59,9 @@ const ViewPublicProfile = () => {
         {publicProfile.profile.first_name} {publicProfile.profile.last_name}'s
         Profile
       </h2>
-
       {/* Basic profile information */}
       <p>Bio: {publicProfile.profile.bio}</p>
       <p>Location: {publicProfile.profile.location}</p>
-
       {/* Profile picture with alt text for accessibility */}
       <p>
         Profile Picture:{" "}
@@ -72,7 +70,6 @@ const ViewPublicProfile = () => {
           alt="Profile"
         />
       </p>
-
       {/* Skills Section */}
       {Array.isArray(publicProfile.profile.skills) &&
         publicProfile.profile.skills?.length > 0 && (
@@ -87,7 +84,6 @@ const ViewPublicProfile = () => {
             </div>
           </div>
         )}
-
       {/* Availability Section */}
       {availability.length > 0 && (
         <div className="profile-section">

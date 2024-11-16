@@ -7,6 +7,10 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import "../../styles/Availability.css";
 import { mergeTimeSlots } from "../../utils/timeUtils.js";
+import {
+  formatTime,
+  formatTimeForServer,
+} from "../../utils/availabilityUtils.js";
 
 /** @constant {string[]} Days of the week for availability slots */
 const DAYS_OF_WEEK = [
@@ -72,14 +76,14 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
   // Add this helper function to split time into 30-minute intervals
   const splitIntoThirtyMinIntervals = (startTime, endTime) => {
     const intervals = [];
-    const start = new Date(`2000-01-01T${startTime}`);
-    const end = new Date(`2000-01-01T${endTime}`);
+    const start = new Date(`1970-01-01T${startTime}Z`);
+    const end = new Date(`1970-01-01T${endTime}Z`);
 
     let currentTime = start;
     while (currentTime < end) {
-      const intervalStart = currentTime.toTimeString().slice(0, 8); // HH:MM:SS
+      const intervalStart = currentTime.toISOString().slice(11, 19); // HH:MM:SS
       currentTime = new Date(currentTime.getTime() + 30 * 60000); // Add 30 minutes
-      const intervalEnd = currentTime.toTimeString().slice(0, 8);
+      const intervalEnd = currentTime.toISOString().slice(11, 19);
 
       intervals.push({
         start_time: intervalStart,
@@ -100,13 +104,13 @@ const AvailabilityForm = ({ existingAvailability, onChange }) => {
    */
   const handleTimeChange = (dayIndex, sessionIndex, field, value) => {
     const updatedSlots = [...availabilitySlots];
-    updatedSlots[dayIndex].sessions[sessionIndex][field] = value + ":00";
+    updatedSlots[dayIndex].sessions[sessionIndex][field] =
+      formatTimeForServer(value);
     setAvailabilitySlots(updatedSlots);
 
     // Only process and notify parent when both start and end times are set
     const currentSession = updatedSlots[dayIndex].sessions[sessionIndex];
     if (currentSession.start_time && currentSession.end_time) {
-      // Create flattened slots with 30-minute intervals for the backend
       const flattenedSlots = getFlattenedSlotsWithIntervals(updatedSlots);
       onChange(flattenedSlots);
     }
