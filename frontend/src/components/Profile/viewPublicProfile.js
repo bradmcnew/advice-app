@@ -4,25 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchPublicProfile } from "../../features/profile/profileSlice";
 import "../../styles/Profile.css";
-
-/**
- * Formats a time string into a readable format
- * @param {string} timeString - Time string in HH:MM:SS format
- * @returns {string} Formatted time string
- */
-const formatTime = (timeString) => {
-  if (!timeString) return "";
-  try {
-    return new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  } catch (error) {
-    console.error("Error formatting time:", error);
-    return timeString;
-  }
-};
+import {
+  formatTime,
+  groupAvailabilityByDay,
+} from "../../utils/availabilityUtils";
 
 /**
  * ViewPublicProfile Component
@@ -50,19 +35,6 @@ const ViewPublicProfile = () => {
   }, [dispatch, id]); // Dependencies ensure effect runs only when necessary
 
   console.log("publicProfile", publicProfile); // Debug log for profile data
-
-  const groupAvailabilityByDay = (availability) => {
-    return availability.reduce((acc, slot) => {
-      if (!acc[slot.day_of_week]) {
-        acc[slot.day_of_week] = [];
-      }
-      acc[slot.day_of_week].push({
-        start: slot.start_time,
-        end: slot.end_time,
-      });
-      return acc;
-    }, {});
-  };
 
   // Show loading state while fetching data
   if (loading) {
@@ -109,7 +81,7 @@ const ViewPublicProfile = () => {
             <div className="skills-list">
               {publicProfile.profile.skills.map((skill, index) => (
                 <span key={index} className="skill-tag">
-                  {skill.name}
+                  {skill}
                 </span>
               ))}
             </div>
@@ -124,9 +96,9 @@ const ViewPublicProfile = () => {
             {Object.entries(groupAvailabilityByDay(availability)).map(
               ([day, sessions]) => (
                 <div key={day} className="availability-day">
-                  <span className="day">
-                    {day.charAt(0).toUpperCase() + day.slice(1)}
-                  </span>
+                  <div className="day">
+                    {day.charAt(0).toUpperCase() + day.slice(1)}s
+                  </div>
                   <div className="sessions">
                     {sessions.map((session, index) => (
                       <span key={index} className="session-time">

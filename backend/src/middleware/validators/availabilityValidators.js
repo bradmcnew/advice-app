@@ -37,15 +37,18 @@ const setAvailabilityValidator = () => [
   body("availability.*.end_time")
     .matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/)
     .withMessage("End time must be a valid time in HH:MM:SS format")
-    .custom((value, { req }) => {
+    .custom((value, { req, path }) => {
       if (!isHalfHourIncrement(value)) {
         throw new Error(
           "End time must be in half-hour increments (e.g., 12:00, 12:30)."
         );
       }
-      // Ensure end time is after start time
+      // Extract the current index from the path
+      const index = parseInt(path.match(/\[(\d+)\]/)[1]);
+
+      // Get the corresponding start time for this slot
       const startTime = new Date(
-        `1970-01-01T${req.body.availability[0].start_time}Z`
+        `1970-01-01T${req.body.availability[index].start_time}Z`
       );
       const endTime = new Date(`1970-01-01T${value}Z`);
       if (endTime <= startTime) {
