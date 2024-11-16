@@ -1,42 +1,40 @@
-const express = require("express");
-const router = express.Router();
-const passport = require("passport");
+import express from "express";
+import passport from "passport";
 
 // Import validation middleware for user registration
-const {
-  userValidationRules,
-} = require("../../middleware/validators/user/userRegisterValidator");
+import { userValidationRules } from "../../middleware/validators/user/userRegisterValidator.js";
 
 // Import the controller for user registration
-const registerUserController = require("../../controllers/auth/registerUserController");
+import registerUserController from "../../controllers/auth/registerUserController.js";
 
 // Import validation middleware for user login
-const {
-  loginValidationRules,
-} = require("../../middleware/validators/user/userLoginValidator");
+import { loginValidationRules } from "../../middleware/validators/user/userLoginValidator.js";
 
 // Import the controller for user login
-const loginUserController = require("../../controllers/auth/loginUserController");
+import loginUserController from "../../controllers/auth/loginUserController.js";
 
 // Import the controller for user logout
-const logoutUserController = require("../../controllers/auth/logoutUserController");
+import logoutUserController from "../../controllers/auth/logoutUserController.js";
 
 // Import the controller for forgot password and reset password
-const {
+import {
   forgotPassword,
   resetPassword,
-} = require("../../controllers/auth/resetUserPasswordController");
+} from "../../controllers/auth/resetUserPasswordController.js";
 
 // Import the password rate limiter middleware
-const passwordRateLimiter = require("../../utils/passwordRateLimiter");
+import passwordRateLimiter from "../../utils/passwordRateLimiter.js";
 
 // Import the validation middleware for password reset
-const {
-  resetPasswordValidationRules,
-  validateResetPassword,
-} = require("../../middleware/validators/user/userResetPasswordValidator");
-const ensureAuthenticated = require("../../middleware/auth");
-const validateRequest = require("../../middleware/validators/validateRequest");
+import { resetPasswordValidationRules } from "../../middleware/validators/user/userResetPasswordValidator.js";
+
+// Import authentication middleware
+import ensureAuthenticated from "../../middleware/auth.js";
+
+// Import request validation middleware
+import validateRequest from "../../middleware/validators/validateRequest.js";
+
+const router = express.Router();
 
 // @route POST /api/users/register
 // @desc Register a new user
@@ -82,8 +80,6 @@ router.post(
 // @desc Get the dashboard for the authenticated user
 // @access Private
 router.get("/dashboard", ensureAuthenticated, (req, res) => {
-  // Respond with user information or any dashboard data
-
   const {
     id,
     password_hash,
@@ -93,16 +89,17 @@ router.get("/dashboard", ensureAuthenticated, (req, res) => {
     reset_token_expiration,
     ...userData
   } = req.user;
+
   res.status(200).json({
     message: "Welcome to your dashboard!",
     user: userData, // Accessing the logged-in user's info
   });
 });
 
-// authentication check route
+// Authentication check route
 router.get("/auth/check-session", ensureAuthenticated, (req, res) => {
   res.status(200).json({ authenticated: true });
 });
 
 // Export the router to use in the main application
-module.exports = router;
+export default router;

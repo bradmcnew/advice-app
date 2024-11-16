@@ -1,5 +1,5 @@
 // Import the loginUser service to handle user authentication
-const { loginUser } = require("../../services/user/userLoginService");
+import { loginUser } from "../../services/user/userLoginService.js";
 
 /**
  * Controller function for handling user login.
@@ -39,4 +39,4 @@ const loginUserController = async (req, res, next) => {
 };
 
 // Export the loginUserController for use in routing
-module.exports = loginUserController;
+export default loginUserController;

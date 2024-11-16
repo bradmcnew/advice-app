@@ -1,6 +1,17 @@
-const { UserProfile, Skill, User } = require("../../models");
+// Import necessary models using ES6 import syntax
+import {
+  UserProfile,
+  Skill,
+  User,
+  UserAvailability,
+} from "../../models/index.js";
 
-// Controller to edit or create a user's profile
+/**
+ * Controller to edit or create a user's profile.
+ * @param {Object} req - The request object containing user data.
+ * @param {Object} res - The response object to send responses to the client.
+ * @param {Function} next - The next middleware function for error handling.
+ */
 const editProfile = async (req, res, next) => {
   try {
     // Fetch authenticated user's id
@@ -50,7 +61,7 @@ const editProfile = async (req, res, next) => {
       });
     }
 
-    // update or create skills and link them to the user profile
+    // Update or create skills and link them to the user profile
     if (skills && skills.length > 0) {
       const existingSkills = await Skill.findAll({
         where: { name: skills },
@@ -69,12 +80,28 @@ const editProfile = async (req, res, next) => {
       await userProfile.setSkills(allSkills);
     }
 
+    // Fetch updated profile with skills and user details
     const updatedProfile = await UserProfile.findByPk(userProfile.id, {
       include: [
         { model: Skill, attributes: ["name"], through: { attributes: [] } },
         { model: User, attributes: ["username", "email", "role"] },
+        {
+          model: UserAvailability,
+          as: "availability",
+          attributes: ["id", "day_of_week", "start_time", "end_time"],
+        },
       ],
     });
+
+    // Sort and organize availability before sending
+    if (updatedProfile.availability) {
+      updatedProfile.availability = updatedProfile.availability.sort((a, b) => {
+        if (a.day_of_week !== b.day_of_week) {
+          return a.day_of_week.localeCompare(b.day_of_week);
+        }
+        return a.start_time.localeCompare(b.start_time);
+      });
+    }
 
     console.log("Updated profile:", updatedProfile);
 
@@ -91,4 +118,5 @@ const editProfile = async (req, res, next) => {
   }
 };
 
-module.exports = { editProfile };
+// Export the controller function using ES6 export syntax
+export { editProfile };

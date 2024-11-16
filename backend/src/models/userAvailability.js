@@ -1,8 +1,15 @@
-const { DataTypes } = require("sequelize");
+import { Model, DataTypes } from "sequelize";
 
-module.exports = (sequelize) => {
-  const UserAvailability = sequelize.define(
-    "UserAvailability",
+export default (sequelize) => {
+  class UserAvailability extends Model {
+    static associate(models) {
+      UserAvailability.belongsTo(models.UserProfile, {
+        foreignKey: "user_profile_id",
+      });
+    }
+  }
+
+  UserAvailability.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -40,6 +47,8 @@ module.exports = (sequelize) => {
       },
     },
     {
+      sequelize,
+      modelName: "UserAvailability",
       tableName: "user_availability",
       timestamps: true,
       underscored: true,

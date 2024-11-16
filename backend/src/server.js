@@ -1,5 +1,5 @@
-const app = require("./app"); // Import the Express application
-const { sequelize } = require("./models"); // Import the Sequelize instance for database connection
+import app from "./app.js"; // Import the Express application
+import { sequelize } from "./models/index.js"; // Import the Sequelize instance for database connection
 
 const PORT = process.env.PORT || 8000; // Define the port to listen on, defaulting to 8000 if not specified
 

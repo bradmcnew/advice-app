@@ -1,5 +1,4 @@
-// src/config/logger.js
-const winston = require("winston");
+import winston from "winston";
 
 // Configure winston
 const logger = winston.createLogger({
@@ -17,4 +16,4 @@ const logger = winston.createLogger({
 });
 
 // Export the logger for use in other modules
-module.exports = logger;
+export default logger;

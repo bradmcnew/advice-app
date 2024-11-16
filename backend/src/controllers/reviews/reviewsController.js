@@ -1,6 +1,6 @@
-const { UserProfile, CollegeStudentReview } = require("../../models");
+import { UserProfile, CollegeStudentReview } from "../../models/index.js";
 
-const getReviewsForUser = async (req, res, next) => {
+const getReviewsForUser = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -30,4 +30,4 @@ const getReviewsForUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getReviewsForUser };
+export { getReviewsForUser };

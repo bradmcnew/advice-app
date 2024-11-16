@@ -1,4 +1,4 @@
-const passport = require("passport");
+import passport from "passport";
 
 /**
  * Logs in a user using Passport.js.
@@ -11,8 +11,8 @@ const passport = require("passport");
  * @param {Function} next - The next middleware function in the stack.
  * @returns {Promise<Object>} - A promise that resolves with the authentication result.
  */
-const loginUser = (req, res, next) => {
-  return new Promise((resolve, reject) => {
+const loginUser = (req, res, next) =>
+  new Promise((resolve, reject) => {
     // Use Passport.js to authenticate the user with the "local" strategy.
     passport.authenticate("local", (err, user, info) => {
       if (err) {
@@ -59,6 +59,5 @@ const loginUser = (req, res, next) => {
       });
     })(req, res, next); // Call the authenticate function with the request and response objects.
   });
-};
 
-module.exports = { loginUser };
+export { loginUser };

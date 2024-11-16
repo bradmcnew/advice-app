@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+import { body } from "express-validator";
 
 // Validation rules for managing skills
 const skillsValidationRules = () => [
@@ -18,6 +18,4 @@ const skillsValidationRules = () => [
     }),
 ];
 
-module.exports = {
-  skillsValidationRules,
-};
+export { skillsValidationRules };

@@ -1,5 +1,12 @@
-const { registerUser } = require("../../services/user/userRegisterService");
+// Import the registerUser service using ES6 import
+import { registerUser } from "../../services/user/userRegisterService.js";
 
+/**
+ * Controller function for handling user registration.
+ * @param {Object} req - The request object containing the user's registration data.
+ * @param {Object} res - The response object used to send responses to the client.
+ * @param {Function} next - The next middleware function to call in case of errors.
+ */
 const registerUserController = async (req, res, next) => {
   try {
     // Attempt to register the user with the provided request body
@@ -27,4 +34,5 @@ const registerUserController = async (req, res, next) => {
   }
 };
 
-module.exports = registerUserController;
+// Export the registerUserController using ES6 export
+export default registerUserController;

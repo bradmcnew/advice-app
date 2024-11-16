@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+import { body } from "express-validator";
 
 // Define validation rules for uploading a resume
 const resumeUploadValidationRules = () => [
@@ -21,6 +21,4 @@ const resumeUploadValidationRules = () => [
   }),
 ];
 
-module.exports = {
-  resumeUploadValidationRules,
-};
+export { resumeUploadValidationRules };

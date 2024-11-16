@@ -1,6 +1,6 @@
-const { UserProfile } = require("../../models");
+import { UserProfile } from "../../models/index.js";
 
-async function getUserOldProfilePicturePath(userId) {
+const getUserOldProfilePicturePath = async (userId) => {
   // Find or create the user profile
   const user = await UserProfile.findOne({
     where: { user_id: userId },
@@ -8,9 +8,9 @@ async function getUserOldProfilePicturePath(userId) {
 
   // Return the current profile picture path
   return user.profile_picture; // Return old profile picture path
-}
+};
 
-async function getUserOldResumePath(userId) {
+const getUserOldResumePath = async (userId) => {
   // Find or create the user profile
   const user = await UserProfile.findOne({
     where: { user_id: userId },
@@ -18,6 +18,6 @@ async function getUserOldResumePath(userId) {
 
   // Return the current resume path
   return user.resume; // Return old resume path
-}
+};
 
-module.exports = { getUserOldProfilePicturePath, getUserOldResumePath };
+export { getUserOldProfilePicturePath, getUserOldResumePath };

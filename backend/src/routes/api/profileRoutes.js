@@ -1,55 +1,22 @@
-/**
- * @file ProfileRoutes.js - Profile management routes
- * @description Handles all profile-related routes including profile viewing, editing,
- * photo uploads, resume management, and skills management.
- * @requires express
- * @requires auth middleware
- * @module routes/api/profileRoutes
- */
-
-const express = require("express");
-const checkAuth = require("../../middleware/auth");
-const {
-  viewProfile,
-} = require("../../controllers/profile/viewProfileController");
-const {
-  editProfile,
-} = require("../../controllers/profile/editProfileController");
-const {
-  profileValidationRules,
-} = require("../../middleware/validators/profile/editProfileValidator");
-const {
-  uploadProfilePicture,
-} = require("../../controllers/profile/uploadProfilePictureController");
-const { upload } = require("../../config/profilePicUpload");
-const resumeUpload = require("../../config/resumeUpload");
-const { isCollegeStudent } = require("../../middleware/isCollegeStudent");
-const {
-  uploadResume,
-} = require("../../controllers/profile/uploadResumeController");
-const {
-  manageSkills,
-} = require("../../controllers/profile/editSkillsController");
-const {
-  viewPublicProfile,
-} = require("../../controllers/profile/viewPublicProfileController");
-const {
-  getReviewsForUser,
-} = require("../../controllers/reviews/reviewsController");
-const {
-  profilePicUploadValidationRules,
-} = require("../../middleware/validators/profile/uploadProfilePicValidator");
-const {
-  resumeUploadValidationRules,
-} = require("../../middleware/validators/profile/uploadResumeValidator");
-const {
-  skillsValidationRules,
-} = require("../../middleware/validators/profile/manageSkillsValidator");
-const {
-  publicProfileViewValidationRules,
-} = require("../../controllers/profile/publicProfileValidator");
-const validateRequest = require("../../middleware/validators/validateRequest");
-const { getAllSkills } = require("../../controllers/profile/getAllSkills");
+import express from "express";
+import checkAuth from "../../middleware/auth.js";
+import { viewProfile } from "../../controllers/profile/viewProfileController.js";
+import { editProfile } from "../../controllers/profile/editProfileController.js";
+import { profileValidationRules } from "../../middleware/validators/profile/editProfileValidator.js";
+import { uploadProfilePicture } from "../../controllers/profile/uploadProfilePictureController.js";
+import { upload } from "../../config/profilePicUpload.js";
+import resumeUpload from "../../config/resumeUpload.js";
+import { isCollegeStudent } from "../../middleware/isCollegeStudent.js";
+import { uploadResume } from "../../controllers/profile/uploadResumeController.js";
+import { manageSkills } from "../../controllers/profile/editSkillsController.js";
+import { viewPublicProfile } from "../../controllers/profile/viewPublicProfileController.js";
+import { getReviewsForUser } from "../../controllers/reviews/reviewsController.js";
+import { profilePicUploadValidationRules } from "../../middleware/validators/profile/uploadProfilePicValidator.js";
+import { resumeUploadValidationRules } from "../../middleware/validators/profile/uploadResumeValidator.js";
+import { skillsValidationRules } from "../../middleware/validators/profile/manageSkillsValidator.js";
+import { publicProfileViewValidationRules } from "../../controllers/profile/publicProfileValidator.js";
+import validateRequest from "../../middleware/validators/validateRequest.js";
+import { getAllSkills } from "../../controllers/profile/getAllSkills.js";
 
 const router = express.Router();
 
@@ -165,7 +132,6 @@ router.put(
  * @param {string} id - User ID to view
  * @access Private - Requires authentication
  */
-
 router.get(
   "/:id",
   checkAuth,
@@ -193,4 +159,4 @@ router.get("/:user_id/reviews", checkAuth, getReviewsForUser);
  * @todo Implement consultation schedule viewing
  */
 
-module.exports = router;
+export default router;

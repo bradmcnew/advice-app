@@ -7,4 +7,4 @@ const ensureAuthenticated = (req, res, next) => {
   return res.status(401).json({ authenticated: false });
 };
 
-module.exports = ensureAuthenticated;
+export default ensureAuthenticated;

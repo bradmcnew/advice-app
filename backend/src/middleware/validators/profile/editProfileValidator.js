@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+import { body } from "express-validator";
 
 // Define validation rules for profile updates
 const profileValidationRules = () => {
@@ -92,6 +92,4 @@ const profileValidationRules = () => {
   ];
 };
 
-module.exports = {
-  profileValidationRules,
-};
+export { profileValidationRules };

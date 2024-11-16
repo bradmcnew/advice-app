@@ -1,10 +1,9 @@
-// config/passport.js
-const LocalStrategy = require("passport-local").Strategy;
-const { User } = require("../models"); // Import the User model
-const googleStrategy = require("./google-strategy");
+import { Strategy as LocalStrategy } from "passport-local";
+import { User } from "../models/index.js"; // Import the User model
+import googleStrategy from "./google-strategy.js"; // Import the Google strategy
 
 // Export the Passport configuration function
-module.exports = (passport) => {
+export default (passport) => {
   // Use LocalStrategy for username and password authentication
   passport.use(
     new LocalStrategy(
@@ -23,7 +22,7 @@ module.exports = (passport) => {
           if (!isPasswordValid) {
             // If password is invalid, return an error
             return done(null, false, {
-              message: "username or password is incorrect.",
+              message: "Username or password is incorrect.",
             });
           }
 

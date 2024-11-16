@@ -1,75 +1,80 @@
-const { Model, DataTypes } = require("sequelize");
-const bcrypt = require("bcrypt");
+import { Model, DataTypes } from "sequelize";
+import bcrypt from "bcrypt";
 
-const SALT_ROUNDS = 10; // Number of salt rounds for password hashing
+const SALT_ROUNDS = 10;
 
-module.exports = (sequelize) => {
-  // Define the User model
-  const User = sequelize.define(
-    "User",
+export default (sequelize) => {
+  class User extends Model {
+    static associate(models) {
+      User.hasOne(models.UserProfile, {
+        foreignKey: "user_id",
+        onDelete: "CASCADE",
+      });
+    }
+
+    async setPassword(password) {
+      this.password_hash = await bcrypt.hash(password, SALT_ROUNDS);
+    }
+
+    async validatePassword(password) {
+      return bcrypt.compare(password, this.password_hash);
+    }
+  }
+
+  User.init(
     {
       id: {
         type: DataTypes.INTEGER,
-        autoIncrement: true, // Automatically increment the ID
-        primaryKey: true, // Set this field as the primary key
+        autoIncrement: true,
+        primaryKey: true,
       },
       username: {
         type: DataTypes.STRING(50),
-        allowNull: false, // Username cannot be null
-        unique: true, // Username must be unique
+        allowNull: false,
+        unique: true,
       },
       email: {
         type: DataTypes.STRING(100),
-        allowNull: false, // Email cannot be null
-        unique: true, // Email must be unique
+        allowNull: false,
+        unique: true,
         validate: {
-          isEmail: true, // Validate that the input is a valid email format
+          isEmail: true,
         },
       },
       password_hash: {
         type: DataTypes.STRING(255),
-        allowNull: true, // Password hash can be null
+        allowNull: true,
       },
       role: {
         type: DataTypes.STRING(50),
-        allowNull: true, // Role can be null
+        allowNull: true,
         validate: {
-          isIn: [["high_school", "college_student"]], // Validate that the role is either high_school or college_student
+          isIn: [["high_school", "college_student"]],
         },
       },
       reset_token: {
         type: DataTypes.STRING(255),
-        allowNull: true, // Reset token can be null
+        allowNull: true,
       },
       reset_token_expiration: {
         type: DataTypes.DATE,
-        allowNull: true, // Reset token expiration can be null
+        allowNull: true,
       },
       google_id: {
         type: DataTypes.STRING,
-        unique: true, // Ensure that googleId is unique
-        allowNull: true, // Allow null for users who authenticate via other means
+        unique: true,
+        allowNull: true,
       },
-      // No need to manually define createdAt or updatedAt here
     },
     {
-      tableName: "users", // Set the table name in the database
-      timestamps: true, // Enable automatic management of `createdAt` and `updatedAt`
-      createdAt: "created_at", // Map `createdAt` to `created_at` column
-      updatedAt: "updated_at", // Map `updatedAt` to `updated_at` column
+      sequelize,
+      modelName: "User",
+      tableName: "users",
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
-  // Instance Methods for Password Hashing
-  User.prototype.setPassword = async function (password) {
-    // Hash the password using bcrypt and set it to password_hash
-    this.password_hash = await bcrypt.hash(password, SALT_ROUNDS);
-  };
-
-  User.prototype.validatePassword = async function (password) {
-    // Compare the provided password with the stored password_hash
-    return bcrypt.compare(password, this.password_hash);
-  };
-
-  return User; // Return the User model
+  return User;
 };

@@ -1,10 +1,17 @@
-const { UserProfile, Skill, UserSkill } = require("../../models/index");
+// Import necessary models using ES6 import syntax
+import { UserProfile, Skill, UserSkill } from "../../models/index.js";
 
+/**
+ * Controller to manage a user's skills (add, update).
+ * @param {Object} req - The request object containing user data.
+ * @param {Object} res - The response object to send responses to the client.
+ * @param {Function} next - The next middleware function for error handling.
+ */
 const manageSkills = async (req, res, next) => {
   try {
     const { skills } = req.body;
 
-    // Normalize skills
+    // Normalize skills (trim and convert to lowercase)
     const cleanedSkills = skills
       .map((skill) => skill.trim().toLowerCase())
       .filter(Boolean);
@@ -26,7 +33,7 @@ const manageSkills = async (req, res, next) => {
 
     // Find or create the skills in the Skill model
     const skillInstances = await Promise.all(
-      skills.map(async (skillName) => {
+      cleanedSkills.map(async (skillName) => {
         const [skill] = await Skill.findOrCreate({
           where: { name: skillName },
         });
@@ -34,7 +41,7 @@ const manageSkills = async (req, res, next) => {
       })
     );
 
-    // update the user's skills via the UserSkills junction table
+    // Update the user's skills via the UserSkills junction table
     await userProfile.setSkills(skillInstances);
 
     res.status(200).json({
@@ -47,4 +54,5 @@ const manageSkills = async (req, res, next) => {
   }
 };
 
-module.exports = { manageSkills };
+// Export the controller function using ES6 export syntax
+export { manageSkills };

@@ -1,42 +1,36 @@
-const express = require("express");
-const session = require("express-session");
-const dotenv = require("dotenv");
-//routes
-const userRoutes = require("./routes/api/userRoutes");
-const googleRoutes = require("./routes/api/googleRoutes");
-const profileRoutes = require("./routes/api/profileRoutes");
-const availabilityRoutes = require("./routes/api/availabilityRoutes");
+import express from "express";
+import session from "express-session";
+import dotenv from "dotenv";
+// Routes
+import userRoutes from "./routes/api/userRoutes.js";
+import googleRoutes from "./routes/api/googleRoutes.js";
+import profileRoutes from "./routes/api/profileRoutes.js";
+import availabilityRoutes from "./routes/api/availabilityRoutes.js";
 
-const errorHandler = require("./middleware/errorHandler");
-const passport = require("passport");
-const passportConfig = require("./config/passport");
-const cors = require("cors");
-const morgan = require("morgan");
-const path = require("path");
+import errorHandler from "./middleware/errorHandler.js";
+import passport from "passport";
+import passportConfig from "./config/passport.js";
+import cors from "cors";
+import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 // Load environment variables from .env file
-// This is essential for managing environment-specific settings securely
 dotenv.config();
 
 const app = express();
 
 // Logging
-// Log HTTP requests to the console
 if (process.env.NODE_ENV === "dev") {
   app.use(morgan("dev"));
 }
 
 // Passport configuration
-// Initializes Passport and sets up the authentication strategy
 passportConfig(passport);
 
 // Middleware
-// Parse incoming JSON requests
-// This middleware parses JSON bodies in requests, enabling easy access to request data
 app.use(express.json());
-
-// Parse incoming URL-encoded requests
-// This middleware parses URL-encoded bodies, which is useful for form submissions
 app.use(express.urlencoded({ extended: true }));
 
 // Enable CORS
@@ -48,46 +42,41 @@ app.use(
 );
 
 // Session configuration
-// Configures session management for tracking user sessions
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Secret for session encryption, should be kept confidential
-    resave: false, // Prevents resaving session if unmodified, reducing unnecessary storage operations
-    saveUninitialized: false, // Saves a new session even if it’s not modified, useful for tracking new sessions
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
       maxAge: 30 * 60 * 1000, // 30 minutes
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-    }, // Set to true if you're using HTTPS to ensure cookies are only sent over secure channels
-    rolling: true, // Reset maxAge on every response, extending the session duration
+    },
+    rolling: true,
   })
 );
 
-// Initialize Passport for authentication
-// Passport must be initialized before it can be used for user authentication
+// Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Create __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // API routes
-// Mounts the userRoutes middleware to handle routes under /api/users
 app.use("/api/users", userRoutes);
-// oauth routes
 app.use("/api/auth", googleRoutes);
-// profile routes
 app.use("/api/profile", profileRoutes);
-// availability routes
 app.use("/api/availability", availabilityRoutes);
 
-// fetch uploaded files
+// Fetch uploaded files
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 // Error handler middleware
-// Provides a centralized place to handle errors, improving maintainability and debugging
 app.use(errorHandler);
 
-// Export the Express app for use in server.js or other modules
-// This allows the app to be imported and used in other parts of the application
-module.exports = app;
+export default app;

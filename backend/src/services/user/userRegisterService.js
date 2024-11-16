@@ -1,4 +1,4 @@
-const { User, UserProfile } = require("../../models/index");
+import { User, UserProfile } from "../../models/index.js";
 
 /**
  * Registers a new user with the provided data.
@@ -69,4 +69,4 @@ const registerUser = async (userData) => {
   };
 };
 
-module.exports = { registerUser };
+export { registerUser };

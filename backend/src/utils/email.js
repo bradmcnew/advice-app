@@ -1,7 +1,6 @@
-// utils/email.js
-const nodeMailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
-const transporter = nodeMailer.createTransport({
+const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
@@ -27,6 +26,4 @@ const sendPasswordResetEmail = async (to, resetUrl) => {
   }
 };
 
-module.exports = {
-  sendPasswordResetEmail,
-};
+export { sendPasswordResetEmail };

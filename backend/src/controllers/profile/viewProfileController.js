@@ -1,4 +1,4 @@
-const { User, UserProfile, Skill } = require("../../models");
+import { User, UserProfile, Skill } from "../../models/index.js";
 
 // Controller to view a user's profile
 const viewProfile = async (req, res) => {
@@ -15,9 +15,20 @@ const viewProfile = async (req, res) => {
         },
         {
           model: Skill,
-          attributes: ["name"], // fields needed from the Skill model
-          through: { attributes: [] }, // exclude UserSkill join table fields
+          through: { attributes: [] }, // exclude junction table attributes
+          attributes: ["id", "name"],
         },
+      ],
+      attributes: [
+        "id",
+        "first_name",
+        "last_name",
+        "bio",
+        "phone_number",
+        "location",
+        "profile_picture",
+        "social_media_links",
+        "resume",
       ],
     });
 
@@ -26,12 +37,8 @@ const viewProfile = async (req, res) => {
       return res.status(404).json({ message: "User profile not found" });
     }
 
-    // map skills into an array of skill names
-    const skills = userProfile.skills.map((skill) => skill.name);
-
-    // Send the user profile as a response
-    const { role } = userProfile.User;
-    let profileData = {
+    // Create base profile data
+    const profileData = {
       username: userProfile.User.username,
       email: userProfile.User.email,
       first_name: userProfile.first_name,
@@ -41,24 +48,26 @@ const viewProfile = async (req, res) => {
       location: userProfile.location,
       profile_picture: userProfile.profile_picture,
       social_media_links: userProfile.social_media_links,
-      role,
+      role: userProfile.User.role,
+      // Initialize skills as empty array by default
+      skills: userProfile.Skills
+        ? userProfile.Skills.map((skill) => skill.name)
+        : [],
     };
 
-    if (role === "high_school") {
-      profileData.message = "This is a high school user profile";
-    } else if (role === "college_student") {
-      profileData.message = "This is a college student user profile";
+    // Add role-specific data
+    if (profileData.role === "college_student") {
       profileData.resume = userProfile.resume;
-      profileData.skills = userProfile.skills;
-      profileData.availability = userProfile.availability;
-      profileData.skills = skills;
     }
 
     res.status(200).json(profileData);
   } catch (err) {
     console.error("Error fetching user profile:", err);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
   }
 };
 
-module.exports = { viewProfile };
+export { viewProfile };

@@ -1,3 +1,4 @@
+// Controller function for logging out the user
 const logoutUserController = async (req, res, next) => {
   // Start the logout process. `req.logout` is provided by Passport.js to handle user logout.
   req.logout((err) => {
@@ -27,4 +28,5 @@ const logoutUserController = async (req, res, next) => {
   });
 };
 
-module.exports = logoutUserController;
+// Export the logoutUserController function
+export default logoutUserController;

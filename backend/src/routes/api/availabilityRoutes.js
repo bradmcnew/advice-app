@@ -1,18 +1,18 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   setAvailability,
   updateAvailability,
   getAvailability,
-} = require("../../controllers/availability/availabilityController");
-const checkAuth = require("../../middleware/auth");
-const { isCollegeStudent } = require("../../middleware/isCollegeStudent");
-const {
+} from "../../controllers/availability/availabilityController.js";
+import checkAuth from "../../middleware/auth.js";
+import { isCollegeStudent } from "../../middleware/isCollegeStudent.js";
+import {
   setAvailabilityValidator,
   updateAvailabilityValidator,
   getAvailabilityValidator,
-} = require("../../middleware/validators/availabilityValidators");
-const validateRequest = require("../../middleware/validators/validateRequest");
-const limiter = require("../../utils/rateLimiter");
+} from "../../middleware/validators/availabilityValidators.js";
+import validateRequest from "../../middleware/validators/validateRequest.js";
+import limiter from "../../utils/rateLimiter.js";
 
 const router = express.Router();
 
@@ -48,4 +48,4 @@ router.get(
   getAvailability
 );
 
-module.exports = router;
+export default router;

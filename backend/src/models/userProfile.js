@@ -1,22 +1,53 @@
-const { DataTypes } = require("sequelize");
+import { Model, DataTypes } from "sequelize";
 
-module.exports = (sequelize) => {
-  const UserProfile = sequelize.define(
-    "UserProfile",
+export default (sequelize) => {
+  class UserProfile extends Model {
+    static associate(models) {
+      UserProfile.belongsTo(models.User, {
+        foreignKey: "user_id",
+      });
+
+      UserProfile.belongsToMany(models.Skill, {
+        through: models.UserSkill,
+        foreignKey: "user_profile_id",
+        otherKey: "skill_id",
+      });
+
+      UserProfile.hasMany(models.UserAvailability, {
+        foreignKey: "user_profile_id",
+        as: "availability",
+        onDelete: "CASCADE",
+      });
+
+      UserProfile.hasMany(models.CollegeStudentReview, {
+        as: "given_reviews",
+        foreignKey: "reviewer_profile_id",
+        onDelete: "CASCADE",
+      });
+
+      UserProfile.hasMany(models.CollegeStudentReview, {
+        as: "received_reviews",
+        foreignKey: "reviewed_profile_id",
+        onDelete: "CASCADE",
+      });
+    }
+  }
+
+  UserProfile.init(
     {
       id: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4, // Automatically generate UUID
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
       user_id: {
-        type: DataTypes.INTEGER, // Link to User ID (integer)
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "users", // Reference the User model (case-sensitive)
+          model: "users",
           key: "id",
         },
-        onDelete: "CASCADE", // Delete profile if user is deleted
+        onDelete: "CASCADE",
       },
       first_name: {
         type: DataTypes.STRING(50),
@@ -43,7 +74,7 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       social_media_links: {
-        type: DataTypes.JSON, // Store social media links in JSON format
+        type: DataTypes.JSON,
         allowNull: true,
       },
       resume: {
@@ -62,6 +93,8 @@ module.exports = (sequelize) => {
       },
     },
     {
+      sequelize,
+      modelName: "UserProfile",
       tableName: "user_profiles",
       timestamps: true,
       createdAt: "created_at",

@@ -1,4 +1,9 @@
-const { UserProfile, User, Skill, UserAvailability } = require("../../models");
+import {
+  UserProfile,
+  User,
+  Skill,
+  UserAvailability,
+} from "../../models/index.js";
 
 const viewPublicProfile = async (req, res) => {
   try {
@@ -7,7 +12,7 @@ const viewPublicProfile = async (req, res) => {
 
     // Fetch user's public profile by profile_id
     const profile = await UserProfile.findOne({
-      where: { id: id },
+      where: { id },
       include: [
         {
           model: User,
@@ -59,7 +64,7 @@ const viewPublicProfile = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Profile found",
-      profile: profile,
+      profile: publicProfile,
     });
   } catch (err) {
     console.error("Error viewing public profile:", err);
@@ -71,4 +76,4 @@ const viewPublicProfile = async (req, res) => {
   }
 };
 
-module.exports = { viewPublicProfile };
+export { viewPublicProfile };

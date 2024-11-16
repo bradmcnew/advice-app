@@ -1,9 +1,7 @@
-"use strict";
+import { v4 as uuidv4 } from "uuid"; // Import the uuid package to generate UUIDs
 
 /** @type {import('sequelize-cli').Migration} */
-const { v4: uuidv4 } = require("uuid"); // Import the uuid package to generate UUIDs
-
-module.exports = {
+export default {
   async up(queryInterface, Sequelize) {
     // Insert sample data into the 'skills' table with UUIDs
     await queryInterface.bulkInsert(

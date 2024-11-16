@@ -1,4 +1,4 @@
-const { User } = require("../models");
+import { User } from "../models/index.js";
 
 // Middleware to check if the user is a college student
 const isCollegeStudent = async (req, res, next) => {
@@ -26,4 +26,4 @@ const isCollegeStudent = async (req, res, next) => {
   }
 };
 
-module.exports = { isCollegeStudent };
+export { isCollegeStudent };

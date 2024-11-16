@@ -1,7 +1,7 @@
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const { User } = require("../models");
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { User } from "../models/index.js";
 
-module.exports = (passport) => {
+export default (passport) => {
   passport.use(
     new GoogleStrategy(
       {

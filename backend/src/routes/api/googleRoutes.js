@@ -1,6 +1,7 @@
-const express = require("express");
-const passport = require("passport");
-const ensureAuthenticated = require("../../middleware/auth");
+import express from "express";
+import passport from "passport";
+import ensureAuthenticated from "../../middleware/auth.js";
+
 const router = express.Router();
 
 /**
@@ -23,12 +24,6 @@ router.get(
  *              If it fails, the user is redirected to the login page.
  * @access Public
  * @returns {void} Redirects to the dashboard or login page based on authentication result.
- */
-/**
- * @route GET /api/auth/google/redirect
- * @description Callback route that Google redirects to after authentication.
- *              Redirects user to the frontend if authentication is successful.
- * @access Public
  */
 router.get(
   "/google/redirect",
@@ -74,4 +69,4 @@ router.get("/user", ensureAuthenticated, (req, res) => {
   return res.status(200).json({ success: true, user: userData });
 });
 
-module.exports = router;
+export default router;

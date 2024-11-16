@@ -1,6 +1,12 @@
-const resetService = require("../../services/user/userForgotPasswordService");
-const { User } = require("../../models");
+// Importing necessary services and models using ES6 import syntax
+import * as resetService from "../../services/user/userForgotPasswordService.js";
+import { User } from "../../models/index.js";
 
+/**
+ * Controller function for handling the forgot password request.
+ * @param {Object} req - The request object containing user data (email).
+ * @param {Object} res - The response object used to send responses to the client.
+ */
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -28,9 +34,14 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+/**
+ * Controller function for handling the password reset request.
+ * @param {Object} req - The request object containing reset token and new password.
+ * @param {Object} res - The response object used to send responses to the client.
+ * @param {Function} next - The next middleware function to call in case of errors.
+ */
 const resetPassword = async (req, res, next) => {
   const { token } = req.params;
-
   const { newPassword, confirmPassword } = req.body;
 
   if (!token) {
@@ -66,4 +77,5 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-module.exports = { forgotPassword, resetPassword };
+// Exporting the controller functions using ES6 export
+export { forgotPassword, resetPassword };

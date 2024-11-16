@@ -1,9 +1,8 @@
-const { UserProfile } = require("../../models");
-const {
-  getUserOldResumePath,
-} = require("../../services/profile/uploadProfilePicService");
-const path = require("path");
-const fs = require("fs").promises;
+// Import necessary modules using ES6 import syntax
+import { UserProfile } from "../../models/index.js";
+import { getUserOldResumePath } from "../../services/profile/uploadProfilePicService.js";
+import path from "path";
+import { promises as fs } from "fs";
 
 // Controller to upload a user's resume
 const uploadResume = async (req, res, next) => {
@@ -53,4 +52,5 @@ const uploadResume = async (req, res, next) => {
   }
 };
 
-module.exports = { uploadResume };
+// Export the controller function using ES6 export syntax
+export { uploadResume };

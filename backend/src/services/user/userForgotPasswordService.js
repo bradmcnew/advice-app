@@ -1,7 +1,6 @@
-// services/authService.js
-const crypto = require("crypto");
-const { User } = require("../../models");
-const { sendPasswordResetEmail } = require("../../utils/email");
+import crypto from "crypto";
+import { User } from "../../models/index.js";
+import { sendPasswordResetEmail } from "../../utils/email.js";
 
 const generateResetToken = () => {
   return crypto.randomBytes(32).toString("hex");
@@ -32,7 +31,7 @@ const saveResetToken = async (user, token) => {
 };
 
 const sendPasswordReset = async (email, token) => {
-  // remove when gmail lets nodemailer send emails
+  // remove when Gmail lets nodemailer send emails
   if (process.env.NODE_ENV === "test") {
     return { status: 200, message: "Password reset email sent" };
   }
@@ -44,7 +43,7 @@ const isResetTokenValid = (user) => {
   return user.reset_token && user.reset_token_expiration > Date.now();
 };
 
-module.exports = {
+export {
   generateResetToken,
   findUserByEmail,
   saveResetToken,

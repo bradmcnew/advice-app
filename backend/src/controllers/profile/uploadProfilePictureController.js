@@ -1,9 +1,7 @@
-const { UserProfile } = require("../../models");
-
-const {
-  getUserOldProfilePicturePath,
-} = require("../../services/profile/uploadProfilePicService");
-const { cleanupOldProfilePic } = require("../../config/profilePicUpload");
+// Import necessary modules using ES6 import syntax
+import { UserProfile } from "../../models/index.js";
+import { getUserOldProfilePicturePath } from "../../services/profile/uploadProfilePicService.js";
+import { cleanupOldProfilePic } from "../../config/profilePicUpload.js";
 
 // Controller to upload a user's profile picture
 const uploadProfilePicture = async (req, res, next) => {
@@ -14,7 +12,7 @@ const uploadProfilePicture = async (req, res, next) => {
 
     const userId = req.user.id;
 
-    // File path (full url if needed)
+    // File path (full URL if needed)
     const profilePicturePath = `/uploads/profilePics/${req.file.filename}`;
 
     // Find or create the user profile
@@ -46,4 +44,5 @@ const uploadProfilePicture = async (req, res, next) => {
   }
 };
 
-module.exports = { uploadProfilePicture };
+// Export the controller function using ES6 export syntax
+export { uploadProfilePicture };

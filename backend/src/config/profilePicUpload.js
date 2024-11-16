@@ -1,7 +1,8 @@
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs").promises;
+import multer from "multer";
+import path from "path";
+import { promises as fs } from "fs";
 
+// Function to clean up old profile picture
 const cleanupOldProfilePic = async (oldPicPath) => {
   if (!oldPicPath) {
     return;
@@ -43,4 +44,4 @@ const fileFilter = (req, file, cb) => {
 // Create the multer upload object
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-module.exports = { upload, cleanupOldProfilePic };
+export { upload, cleanupOldProfilePic };

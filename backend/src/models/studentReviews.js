@@ -1,8 +1,26 @@
-const { Model, DataTypes } = require("sequelize");
+// models/collegeStudentReview.js
+import { Model, DataTypes } from "sequelize";
 
-module.exports = (sequelize) => {
-  const CollegeStudentReview = sequelize.define(
-    "CollegeStudentReview",
+export default (sequelize) => {
+  class CollegeStudentReview extends Model {
+    static associate(models) {
+      // CollegeStudentReview belongs to the reviewer profile
+      CollegeStudentReview.belongsTo(models.UserProfile, {
+        as: "reviewer_profile",
+        foreignKey: "reviewer_profile_id",
+        onDelete: "CASCADE",
+      });
+
+      // CollegeStudentReview belongs to the reviewed profile
+      CollegeStudentReview.belongsTo(models.UserProfile, {
+        as: "reviewed_profile",
+        foreignKey: "reviewed_profile_id",
+        onDelete: "CASCADE",
+      });
+    }
+  }
+
+  CollegeStudentReview.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -51,6 +69,8 @@ module.exports = (sequelize) => {
       },
     },
     {
+      sequelize,
+      modelName: "CollegeStudentReview",
       tableName: "college_student_reviews",
       timestamps: true,
       underscored: true,

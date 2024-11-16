@@ -1,110 +1,68 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-const process = require("process");
-const basename = path.basename(__filename);
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { Sequelize } from "sequelize";
+import process from "process";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.json")[env];
-require("dotenv").config();
+console.log("Environment:", env);
+const config = (await import(__dirname + "/../config/config.js")).default[env];
+console.log("Selected config:", config);
 
 // Import models explicitly
-const UserModel = require("./user");
-const UserProfileModel = require("./userProfile");
-const SkillModel = require("./skill");
-const UserSkillModel = require("./userSkill");
-const UserAvailabilityModel = require("./userAvailability");
-const CollegeStudentReviewModel = require("./studentReviews");
+import UserModel from "./user.js";
+import UserProfileModel from "./userProfile.js";
+import SkillModel from "./skill.js";
+import UserSkillModel from "./userSkill.js";
+import UserAvailabilityModel from "./userAvailability.js";
+import CollegeStudentReviewModel from "./studentReviews.js";
+import BookingModel from "./booking.js";
 
 const db = {};
 
-// Initialize Sequelize with either DATABASE_URL or config object
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], {
-    dialect: "postgres",
-    logging: false,
-  });
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, {
+// Initialize Sequelize
+let sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
     ...config,
     logging: false,
-  });
-}
+  }
+);
 
 // Initialize models
-const User = UserModel(sequelize);
-const UserProfile = UserProfileModel(sequelize);
-const Skill = SkillModel(sequelize);
-const UserSkill = UserSkillModel(sequelize);
-const UserAvailability = UserAvailabilityModel(sequelize);
-const CollegeStudentReview = CollegeStudentReviewModel(sequelize);
+const models = {
+  User: UserModel(sequelize),
+  UserProfile: UserProfileModel(sequelize),
+  Skill: SkillModel(sequelize),
+  UserSkill: UserSkillModel(sequelize),
+  UserAvailability: UserAvailabilityModel(sequelize),
+  CollegeStudentReview: CollegeStudentReviewModel(sequelize),
+  Booking: BookingModel(sequelize),
+};
 
-// Add models to db object
-db.User = User;
-db.UserProfile = UserProfile;
-db.Skill = Skill;
-db.UserSkill = UserSkill;
-db.UserAvailability = UserAvailability;
-db.CollegeStudentReview = CollegeStudentReview;
+// Run associations
+Object.values(models)
+  .filter((model) => typeof model.associate === "function")
+  .forEach((model) => model.associate(models));
 
-// Define associations
-User.hasOne(UserProfile, {
-  foreignKey: "user_id",
-  onDelete: "CASCADE",
-});
+export const {
+  User,
+  UserProfile,
+  Skill,
+  UserSkill,
+  UserAvailability,
+  CollegeStudentReview,
+  Booking,
+} = models;
 
-UserProfile.belongsTo(User, {
-  foreignKey: "user_id",
-});
-
-UserProfile.belongsToMany(Skill, {
-  through: UserSkill,
-  foreignKey: "user_profile_id",
-  otherKey: "skill_id",
-});
-
-Skill.belongsToMany(UserProfile, {
-  through: UserSkill,
-  foreignKey: "skill_id",
-  otherKey: "user_profile_id",
-});
-
-UserProfile.hasMany(UserAvailability, {
-  foreignKey: "user_profile_id",
-  as: "availability",
-  onDelete: "CASCADE",
-});
-
-UserAvailability.belongsTo(UserProfile, {
-  foreignKey: "user_profile_id",
-});
-
-UserProfile.hasMany(CollegeStudentReview, {
-  as: "given_reviews",
-  foreignKey: "reviewer_profile_id",
-  onDelete: "CASCADE",
-});
-
-UserProfile.hasMany(CollegeStudentReview, {
-  as: "received_reviews",
-  foreignKey: "reviewed_profile_id",
-  onDelete: "CASCADE",
-});
-
-CollegeStudentReview.belongsTo(UserProfile, {
-  as: "reviewer_profile",
-  foreignKey: "reviewer_profile_id",
-});
-
-CollegeStudentReview.belongsTo(UserProfile, {
-  as: "reviewed_profile",
-  foreignKey: "reviewed_profile_id",
-});
-
-// Add sequelize instances to db object
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-module.exports = db;
+export { sequelize };

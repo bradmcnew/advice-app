@@ -24,4 +24,4 @@ const errorHandler = (err, req, res, next) => {
 };
 
 // Export the error handler for use in the application
-module.exports = errorHandler;
+export default errorHandler;

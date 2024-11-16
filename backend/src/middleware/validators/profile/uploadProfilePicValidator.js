@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+import { body } from "express-validator";
 
 // Define validation rules for profile picture upload
 const profilePicUploadValidationRules = () => [
@@ -22,6 +22,4 @@ const profilePicUploadValidationRules = () => [
   }),
 ];
 
-module.exports = {
-  profilePicUploadValidationRules,
-};
+export { profilePicUploadValidationRules };

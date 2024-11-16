@@ -1,8 +1,13 @@
-const { DataTypes } = require("sequelize");
+import { Model, DataTypes } from "sequelize";
 
-module.exports = (sequelize) => {
-  const UserSkills = sequelize.define(
-    "user_skills",
+export default (sequelize) => {
+  class UserSkill extends Model {
+    static associate(models) {
+      // Through table typically doesn't need associations
+    }
+  }
+
+  UserSkill.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -29,11 +34,14 @@ module.exports = (sequelize) => {
       },
     },
     {
+      sequelize,
+      modelName: "UserSkill",
       tableName: "user_skills",
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
     }
   );
-  return UserSkills;
+
+  return UserSkill;
 };
