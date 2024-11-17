@@ -132,7 +132,7 @@ const setAvailability = async (req, res, next) => {
     console.error("Error setting availability:", error);
     return res.status(500).json({
       message: "Failed to set availability",
-      error: process.env.NODE_ENV === "dev" ? error.message : undefined,
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };

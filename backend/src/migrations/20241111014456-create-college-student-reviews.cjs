@@ -1,53 +1,42 @@
 "use strict";
 
 /** @type {import('sequelize-cli').Migration} */
-export default {
+module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("user_profiles", {
+    await queryInterface.createTable("college_student_reviews", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
+      reviewer_profile_id: {
+        type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: "users",
+          model: "user_profiles",
           key: "id",
         },
         onDelete: "CASCADE",
       },
-      first_name: {
-        type: Sequelize.STRING(50),
+      reviewed_profile_id: {
+        type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: "user_profiles",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
-      last_name: {
-        type: Sequelize.STRING(50),
+      rating: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        validate: {
+          min: 1,
+          max: 5,
+        },
       },
-      bio: {
+      review_text: {
         type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      phone_number: {
-        type: Sequelize.STRING(20),
-        allowNull: true,
-      },
-      location: {
-        type: Sequelize.STRING(100),
-        allowNull: true,
-      },
-      profile_picture: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      social_media_links: {
-        type: Sequelize.JSON,
-        allowNull: true,
-      },
-      resume: {
-        type: Sequelize.STRING,
         allowNull: true,
       },
       created_at: {
@@ -64,6 +53,6 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("user_profiles");
+    await queryInterface.dropTable("college_student_reviews");
   },
 };

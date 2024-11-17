@@ -1,42 +1,53 @@
 "use strict";
 
 /** @type {import('sequelize-cli').Migration} */
-export default {
+module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("college_student_reviews", {
+    await queryInterface.createTable("user_profiles", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      reviewer_profile_id: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: "user_profiles",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-      },
-      reviewed_profile_id: {
-        type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: "user_profiles",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-      },
-      rating: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        validate: {
-          min: 1,
-          max: 5,
+        references: {
+          model: "users",
+          key: "id",
         },
+        onDelete: "CASCADE",
       },
-      review_text: {
+      first_name: {
+        type: Sequelize.STRING(50),
+        allowNull: false,
+      },
+      last_name: {
+        type: Sequelize.STRING(50),
+        allowNull: false,
+      },
+      bio: {
         type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      phone_number: {
+        type: Sequelize.STRING(20),
+        allowNull: true,
+      },
+      location: {
+        type: Sequelize.STRING(100),
+        allowNull: true,
+      },
+      profile_picture: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      social_media_links: {
+        type: Sequelize.JSON,
+        allowNull: true,
+      },
+      resume: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       created_at: {
@@ -53,6 +64,6 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("college_student_reviews");
+    await queryInterface.dropTable("user_profiles");
   },
 };

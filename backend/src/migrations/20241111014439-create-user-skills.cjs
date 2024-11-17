@@ -1,17 +1,31 @@
 "use strict";
 
 /** @type {import('sequelize-cli').Migration} */
-export default {
+module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("skills", {
+    await queryInterface.createTable("user_skills", {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      name: {
-        type: Sequelize.STRING(100),
+      user_profile_id: {
+        type: Sequelize.UUID,
         allowNull: false,
+        references: {
+          model: "user_profiles",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      skill_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: "skills",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
       created_at: {
         type: Sequelize.DATE,
@@ -27,6 +41,6 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("skills");
+    await queryInterface.dropTable("user_skills");
   },
 };

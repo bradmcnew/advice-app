@@ -1,7 +1,9 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default {
-  dev: {
+  development: {
     username: process.env.DB_USERNAME || "postgres",
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME || "connections-app-v2",
